@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../components/Navbar/Navbar';
 import { Sidebar } from '../components/Sidebar/Sidebar';
+import { useState } from 'react';
 
 export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-navy-900">
-      <Navbar
-        onMenuToggle={() => setSidebarOpen(o => !o)}
-        isSidebarOpen={sidebarOpen}
-      />
+    <div className="min-h-screen" style={{ background: '#0b1f3a' }}>
+      <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
-      <div className="flex pt-[88px]">
+      <div className="flex pt-[90px]">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block w-64 flex-shrink-0">
-          <div className="fixed left-0 top-[88px] bottom-0 w-64 glass border-r border-blue-600/10 overflow-y-auto">
+          <div className="fixed left-0 top-[90px] bottom-0 w-64 overflow-y-auto"
+            style={{ background: '#0b1f3a', borderRight: '1px solid rgba(27,154,245,0.1)' }}>
             <Sidebar isOpen={true} onClose={() => {}} />
           </div>
         </div>
@@ -27,7 +26,7 @@ export const DashboardLayout = () => {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 p-4 lg:p-6 lg:ml-0">
+        <main className="flex-1 min-w-0 p-4 lg:p-6">
           <Outlet />
         </main>
       </div>
