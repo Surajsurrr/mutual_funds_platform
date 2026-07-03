@@ -8,14 +8,14 @@ export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen" style={{ background: '#0b1f3a' }}>
+    <div className="min-h-screen" style={{ background: '#F5F4F7' }}>
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
       <div className="flex pt-[90px]">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block w-64 flex-shrink-0">
           <div className="fixed left-0 top-[90px] bottom-0 w-64 overflow-y-auto"
-            style={{ background: '#0b1f3a', borderRight: '1px solid rgba(27,154,245,0.1)' }}>
+            style={{ background: '#202C44', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
             <Sidebar isOpen={true} onClose={() => {}} />
           </div>
         </div>

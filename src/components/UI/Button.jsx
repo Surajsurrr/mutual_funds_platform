@@ -1,20 +1,33 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+/* Design system: pill-shaped teal gradient buttons */
+const TEAL_GRAD = 'linear-gradient(135deg, #0B667E 0%, #12B4C3 100%)';
+const TEAL_GRAD_HOVER = 'linear-gradient(135deg, #0d8fa8 0%, #3ecfdc 100%)';
+
 const variants = {
-  primary:   'text-white',
-  secondary: 'text-white border',
-  ghost:     'bg-transparent text-blue-300 hover:text-white hover:bg-blue-900/20',
-  danger:    'text-red-400 border border-red-500/30 hover:bg-red-500/10',
-  success:   'text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/10',
-  gradient:  'text-white',
+  primary:   'text-white font-bold',
+  secondary: 'text-white font-semibold',
+  ghost:     'bg-transparent font-semibold',
+  danger:    'font-semibold border',
+  success:   'font-semibold border',
+  gradient:  'text-white font-bold',
 };
-const sizes = { sm: 'px-3 py-1.5 text-xs', md: 'px-4 py-2 text-sm', lg: 'px-6 py-3 text-base', xl: 'px-8 py-4 text-lg' };
+
+const sizes = {
+  sm: 'px-4 py-1.5 text-xs',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-7 py-3 text-base',
+  xl: 'px-9 py-4 text-lg',
+};
 
 const getStyle = (variant) => {
-  if (variant === 'primary')   return { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', boxShadow: '0 2px 12px rgba(27,154,245,0.3)' };
-  if (variant === 'gradient')  return { background: 'linear-gradient(135deg,#0b1f3a,#0e7ee4,#42b4ff)', boxShadow: '0 2px 16px rgba(27,154,245,0.25)' };
-  if (variant === 'secondary') return { borderColor: 'rgba(27,154,245,0.3)', background: 'rgba(27,154,245,0.08)' };
+  if (variant === 'primary')   return { background: TEAL_GRAD, boxShadow: '0 4px 16px rgba(11,102,126,0.3)' };
+  if (variant === 'gradient')  return { background: TEAL_GRAD, boxShadow: '0 4px 20px rgba(11,102,126,0.25)' };
+  if (variant === 'secondary') return { background: 'transparent', border: '2px solid #0B667E', color: '#0B667E' };
+  if (variant === 'ghost')     return { color: '#0B667E' };
+  if (variant === 'danger')    return { color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' };
+  if (variant === 'success')   return { color: '#10b981', borderColor: 'rgba(16,185,129,0.3)' };
   return {};
 };
 
@@ -30,12 +43,24 @@ export const Button = ({
     whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
     style={{ ...getStyle(variant), ...style }}
     className={`
-      inline-flex items-center justify-center gap-2 font-semibold rounded-xl
+      inline-flex items-center justify-center gap-2 rounded-full
       transition-all duration-200 cursor-pointer
       disabled:opacity-50 disabled:cursor-not-allowed
       ${variants[variant]} ${sizes[size]}
       ${fullWidth ? 'w-full' : ''} ${className}
     `}
+    onMouseEnter={e => {
+      if ((variant === 'primary' || variant === 'gradient') && !disabled && !loading) {
+        e.currentTarget.style.background = TEAL_GRAD_HOVER;
+        e.currentTarget.style.boxShadow = '0 6px 24px rgba(11,102,126,0.4)';
+      }
+    }}
+    onMouseLeave={e => {
+      if ((variant === 'primary' || variant === 'gradient') && !disabled && !loading) {
+        e.currentTarget.style.background = TEAL_GRAD;
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(11,102,126,0.3)';
+      }
+    }}
     {...props}
   >
     {loading ? (
@@ -55,3 +80,5 @@ export const Button = ({
     )}
   </motion.button>
 );
+
+

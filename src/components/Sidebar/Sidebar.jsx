@@ -36,7 +36,7 @@ const ADMIN_NAV = [
 const NAV_MAP = { client: CLIENT_NAV, cb: CB_NAV, amc: AMC_NAV, admin: ADMIN_NAV };
 
 const ROLE_META = {
-  client: { label: 'Investor Portal',   icon: TrendingUp, color: '#1b9af5' },
+  client: { label: 'Investor Portal',   icon: TrendingUp, color: '#12B4C3' },
   cb:     { label: 'Corporate Banking', icon: Briefcase,  color: '#fbbf24' },
   amc:    { label: 'AMC Portal',        icon: Building2,  color: '#34d399' },
   admin:  { label: 'Admin Console',     icon: Shield,     color: '#f87171' },
@@ -64,17 +64,17 @@ export const Sidebar = ({ isOpen, onClose }) => {
         animate={{ x: isOpen ? 0 : '-100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="fixed left-0 top-0 bottom-0 z-30 w-64 flex flex-col pt-[90px] lg:translate-x-0 lg:static lg:pt-0"
-        style={{ background: '#0b1f3a', borderRight: '1px solid rgba(27,154,245,0.1)' }}
+        style={{ background: '#202C44', borderRight: '1px solid rgba(255,255,255,0.06)' }}
       >
         {/* Role header */}
-        <div className="p-4" style={{ borderBottom: '1px solid rgba(27,154,245,0.1)' }}>
+        <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg" style={{ background: 'rgba(27,154,245,0.12)' }}>
+            <div className="p-2 rounded-lg" style={{ background: 'rgba(18,180,195,0.15)' }}>
               <meta.icon size={15} style={{ color: meta.color }} />
             </div>
             <div>
-              <p className="text-xs font-bold" style={{ color: meta.color }}>{meta.label}</p>
-              <p className="text-xs" style={{ color: '#7a94ab' }}>ID: {user?.id || 'USR000'}</p>
+              <p className="text-xs font-bold" style={{ color: meta.color, fontFamily: 'Poppins, sans-serif' }}>{meta.label}</p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>ID: {user?.id || 'USR000'}</p>
             </div>
           </div>
         </div>
@@ -89,7 +89,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}
               `}
               style={({ isActive }) => isActive
-                ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', boxShadow: '0 2px 12px rgba(27,154,245,0.3)' }
+                ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', boxShadow: '0 2px 12px rgba(18,180,195,0.3)' }
                 : {}}>
               {({ isActive }) => (
                 <>
@@ -102,11 +102,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4" style={{ borderTop: '1px solid rgba(27,154,245,0.1)' }}>
+        <div className="p-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="rounded-xl p-3 text-center"
-            style={{ background: 'rgba(27,154,245,0.08)', border: '1px solid rgba(27,154,245,0.15)' }}>
-            <p className="text-xs font-bold" style={{ color: '#42b4ff' }}>FundFlow v1.0.0</p>
-            <p className="text-xs mt-0.5" style={{ color: '#7a94ab' }}>SEBI Registered Platform</p>
+            style={{ background: 'rgba(18,180,195,0.1)', border: '1px solid rgba(18,180,195,0.2)' }}>
+            <p className="text-xs font-bold" style={{ color: '#12B4C3', fontFamily: 'Poppins, sans-serif' }}>FundFlow v1.0.0</p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>SEBI Registered Platform</p>
           </div>
         </div>
       </motion.aside>

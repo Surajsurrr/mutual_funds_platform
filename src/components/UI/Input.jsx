@@ -13,9 +13,9 @@ export const Input = forwardRef(({
   return (
     <div className={`flex flex-col gap-1.5 ${containerClassName}`}>
       {label && (
-        <label className="text-sm font-medium text-slate-300">
+        <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2745' }}>
           {label}
-          {props.required && <span className="text-rose-500 ml-1">*</span>}
+          {props.required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
         </label>
       )}
       <div className="relative">
