@@ -25,6 +25,9 @@ import TransactionHistoryPage from '../pages/Client/TransactionHistoryPage';
 
 // CB Pages
 import CBDashboard from '../pages/CB/CBDashboard';
+import CBClientsPage from '../pages/CB/CBClientsPage';
+import CBTransactionsPage from '../pages/CB/CBTransactionsPage';
+import CBReportsPage from '../pages/CB/CBReportsPage';
 
 // AMC Pages
 import AMCDashboard from '../pages/AMC/AMCDashboard';
@@ -67,7 +70,7 @@ export const AppRoutes = () => {
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* ─── Client Routes ─── */}
-        <Route element={<RoleRoute allowedRoles={['client']} />}>
+        <Route element={<RoleRoute allowedRoles={['client', 'admin']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/client/dashboard" element={<ClientDashboard />} />
             <Route path="/client/amc" element={<AMCListPage />} />
@@ -80,17 +83,17 @@ export const AppRoutes = () => {
         </Route>
 
         {/* ─── Corporate Banking Routes ─── */}
-        <Route element={<RoleRoute allowedRoles={['cb']} />}>
+        <Route element={<RoleRoute allowedRoles={['cb', 'admin']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/cb/dashboard" element={<CBDashboard />} />
-            <Route path="/cb/clients" element={<CBDashboard />} />
-            <Route path="/cb/transactions" element={<CBDashboard />} />
-            <Route path="/cb/reports" element={<CBDashboard />} />
+            <Route path="/cb/clients" element={<CBClientsPage />} />
+            <Route path="/cb/transactions" element={<CBTransactionsPage />} />
+            <Route path="/cb/reports" element={<CBReportsPage />} />
           </Route>
         </Route>
 
         {/* ─── AMC Routes ─── */}
-        <Route element={<RoleRoute allowedRoles={['amc']} />}>
+        <Route element={<RoleRoute allowedRoles={['amc', 'admin']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/amc/dashboard" element={<AMCDashboard />} />
             <Route path="/amc/schemes" element={<AMCSchemesPage />} />
