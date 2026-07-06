@@ -8,7 +8,14 @@ import { Modal } from '../../components/UI/Modal';
 import { formatCurrency } from '../../utils/formatters';
 import toast from 'react-hot-toast';
 
-const CARD = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' };
+const CARD = {
+  background: 'rgba(255,255,255,0.03)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  padding: '2rem',
+};
 
 export default function BuyPage() {
   const { id } = useParams();
@@ -44,16 +51,16 @@ export default function BuyPage() {
         <CheckCircle size={48} className="text-emerald-400" />
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-center">
-        <h2 className="text-3xl font-black text-white">Order Placed! 🎉</h2>
+        <h2 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Order Placed! 🎉</h2>
         <p className="mt-2" style={{ color: '#b0c4d8' }}>Your investment of <span className="text-white font-bold">{formatCurrency(numAmount)}</span> in</p>
-        <p className="font-bold text-lg mt-1" style={{ color: '#42b4ff' }}>{scheme.name}</p>
-        <div className="rounded-2xl p-5 mt-6 text-left space-y-2 max-w-sm mx-auto" style={CARD}>
+        <p className="font-bold text-lg mt-1" style={{ color: '#12B4C3' }}>{scheme.name}</p>
+        <div className="rounded-2xl mt-6 text-left space-y-2.5 max-w-sm mx-auto" style={CARD}>
           {[['Units', units],['NAV',`₹${scheme.nav}`],['Type',mode==='sip'?'SIP':'One-time'],['Status','⏳ Processing']].map(([l,v]) => (
             <p key={l} className="text-sm" style={{ color: '#b0c4d8' }}><span style={{ color: '#7a94ab' }}>{l}:</span> <span className="font-semibold text-white">{v}</span></p>
           ))}
         </div>
       </motion.div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 mt-4">
         <Button variant="secondary" onClick={() => navigate('/client/portfolio')}>View Portfolio</Button>
         <Button variant="primary" onClick={() => { setOrderPlaced(false); setAmount(''); }}>Invest More</Button>
       </div>
@@ -61,67 +68,89 @@ export default function BuyPage() {
   );
 
   return (
-    <div className="max-w-2xl space-y-6 pb-8">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium" style={{ color: '#7a94ab' }}>
+    <div className="max-w-2xl pb-8">
+      {/* Back button */}
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold transition-colors hover:text-white" style={{ color: '#7a94ab', marginBottom: '1.5rem' }}>
         <ArrowLeft size={16} /> Back
       </button>
 
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>Invest Now</p>
-        <h1 className="text-2xl font-black text-white">Buy Fund</h1>
-        <div className="section-divider mt-2" />
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        style={{ marginBottom: '2.25rem' }}>
+        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Invest Now</p>
+        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Buy Fund</h1>
+        <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
       </motion.div>
 
-      {/* Fund Info */}
-      <div className="rounded-2xl p-5 flex items-center justify-between" style={CARD}>
-        <div>
-          <p className="font-bold text-white text-sm">{scheme.name}</p>
-          <p className="text-xs" style={{ color: '#7a94ab' }}>{scheme.category} • {scheme.risk} Risk</p>
-        </div>
-        <div className="text-right">
-          <p className="text-xl font-black text-white">₹{scheme.nav}</p>
-          <p className={`text-xs font-semibold ${scheme.dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{scheme.dayChangePct}% today</p>
+      {/* Fund Info Card */}
+      <div className="rounded-2xl" style={{ ...CARD, padding: '1.75rem', marginBottom: '1.75rem' }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-extrabold text-white text-base lg:text-lg" style={{ fontFamily: 'Poppins, sans-serif' }}>{scheme.name}</p>
+            <p className="text-xs mt-1" style={{ color: '#7a94ab' }}>{scheme.category} • {scheme.risk} Risk</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xl lg:text-2xl font-black text-white">₹{scheme.nav}</p>
+            <p className={`text-xs font-semibold mt-0.5 ${scheme.dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{scheme.dayChange >= 0 ? '+' : ''}{scheme.dayChangePct}% today</p>
+          </div>
         </div>
       </div>
 
       {/* Mode Toggle */}
-      <div className="rounded-2xl p-1.5 flex gap-1.5" style={{ background: '#162d50', border: '1px solid rgba(27,154,245,0.12)' }}>
+      <div className="rounded-2xl p-1.5 flex gap-1.5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '1.75rem' }}>
         {['lumpsum','sip'].map(m => (
           <button key={m} onClick={() => { setMode(m); setAmount(''); }}
-            className="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all"
+            className="flex-1 py-2.5 rounded-xl text-sm font-extrabold transition-all"
             style={mode === m
-              ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', boxShadow: '0 2px 12px rgba(27,154,245,0.3)' }
+              ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', boxShadow: '0 4px 12px rgba(18,180,195,0.25)' }
               : { color: '#7a94ab' }}>
             {m === 'lumpsum' ? '💰 One-Time' : '🔄 Monthly SIP'}
           </button>
         ))}
       </div>
 
-      <div className="rounded-2xl p-6 space-y-5" style={CARD}>
+      {/* Input panel */}
+      <div className="rounded-2xl space-y-5" style={CARD}>
         <div>
-          <label className="text-sm font-semibold text-white mb-2 block">
+          <label className="text-sm font-bold text-slate-300 mb-2.5 block uppercase tracking-wider" style={{ fontSize: '0.75rem' }}>
             Amount{mode === 'sip' ? ' (per month)' : ''}
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold" style={{ color: '#7a94ab' }}>₹</span>
+            <span className="absolute left-4.5 top-1/2 -translate-y-1/2 text-xl font-bold" style={{ color: '#12B4C3' }}>₹</span>
             <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
               placeholder={`Min ₹${minAmount.toLocaleString('en-IN')}`}
-              className="input-field pl-10 text-xl font-bold" id="invest-amount" min={minAmount} />
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                color: '#ffffff',
+                padding: '0.875rem 1rem 0.875rem 2.5rem',
+                outline: 'none',
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                width: '100%',
+                fontFamily: 'Inter, sans-serif',
+                transition: 'border-color 0.2s',
+              }}
+              className="focus:border-[#12B4C3]"
+              id="invest-amount" min={minAmount} />
           </div>
           {numAmount > 0 && numAmount < minAmount && (
-            <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
-              <AlertCircle size={12} /> Min {mode==='sip'?'SIP':'lumpsum'} is ₹{minAmount.toLocaleString('en-IN')}
+            <p className="text-xs text-red-400 mt-2.5 flex items-center gap-1">
+              <AlertCircle size={13} /> Min {mode==='sip'?'SIP':'lumpsum'} is ₹{minAmount.toLocaleString('en-IN')}
             </p>
           )}
         </div>
 
-        <div className="flex gap-2 flex-wrap">
+        {/* Quick select chips */}
+        <div className="flex gap-2 flex-wrap pb-1">
           {[1000,5000,10000,25000,50000].map(val => (
             <button key={val} onClick={() => setAmount(String(val))}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border"
+              className="flex-shrink-0 transition-all border"
               style={amount === String(val)
-                ? { background: 'rgba(27,154,245,0.15)', color: '#42b4ff', borderColor: '#1b9af5' }
-                : { background: 'rgba(27,154,245,0.06)', color: '#b0c4d8', borderColor: 'rgba(27,154,245,0.15)' }}>
+                ? { background: 'rgba(18,180,195,0.15)', color: '#12B4C3', borderColor: '#12B4C3', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700 }
+                : { background: 'rgba(255,255,255,0.03)', color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.06)', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600 }
+              }>
               ₹{val.toLocaleString('en-IN')}
             </button>
           ))}
@@ -129,11 +158,11 @@ export default function BuyPage() {
 
         {isValid && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="pt-4 space-y-2" style={{ borderTop: '1px solid rgba(27,154,245,0.08)' }}>
-            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#7a94ab' }}>Order Summary</p>
+            className="pt-4.5 space-y-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400" style={{ fontSize: '0.7rem' }}>Order Summary</p>
             {[{ label:'Amount',val:formatCurrency(numAmount) },{ label:'Approx. Units',val:`${units} units` },{ label:'NAV',val:`₹${scheme.nav}` },{ label:'Type',val:mode==='sip'?'SIP':'One-time' }].map(item => (
               <div key={item.label} className="flex justify-between">
-                <span className="text-xs" style={{ color: '#7a94ab' }}>{item.label}</span>
+                <span className="text-xs text-slate-400">{item.label}</span>
                 <span className="text-xs font-semibold text-white">{item.val}</span>
               </div>
             ))}
@@ -142,25 +171,47 @@ export default function BuyPage() {
 
         {mode === 'sip' && isValid && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-4"
-            style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+            style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)' }}>
             <div className="flex items-center gap-2 mb-3">
               <Calculator size={14} className="text-emerald-400" />
-              <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">SIP Calculator · 3 Years @ 12% p.a.</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">SIP Calculator · 3 Years @ 12% p.a.</p>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               {[{ label:'Invested',val:formatCurrency(numAmount*36) },{ label:'Est. Gain',val:formatCurrency(sipFutureVal-numAmount*36) },{ label:'Total',val:formatCurrency(sipFutureVal) }].map(s => (
                 <div key={s.label}>
-                  <p className="text-xs" style={{ color: '#7a94ab' }}>{s.label}</p>
-                  <p className="font-bold text-sm mt-0.5 text-white">{s.val}</p>
+                  <p className="text-[10px] text-slate-400">{s.label}</p>
+                  <p className="font-bold text-xs mt-0.5 text-white">{s.val}</p>
                 </div>
               ))}
             </div>
           </motion.div>
         )}
 
-        <Button variant="primary" size="lg" fullWidth disabled={!isValid} onClick={() => setShowConfirm(true)} id="place-order-btn">
+        {/* Invest button */}
+        <button
+          disabled={!isValid}
+          onClick={() => setShowConfirm(true)}
+          id="place-order-btn"
+          className="w-full rounded-2xl text-white flex items-center justify-center gap-2 font-bold transition-all"
+          style={isValid
+            ? {
+                background: 'linear-gradient(135deg,#0B667E,#12B4C3)',
+                boxShadow: '0 4px 16px rgba(18,180,195,0.3)',
+                padding: '0.875rem',
+                fontSize: '0.95rem',
+                cursor: 'pointer',
+              }
+            : {
+                background: 'rgba(255,255,255,0.04)',
+                color: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.05)',
+                padding: '0.875rem',
+                fontSize: '0.95rem',
+                cursor: 'not-allowed',
+              }}
+        >
           {mode === 'sip' ? '🔄 Start SIP' : '💰 Place Order'} — {numAmount > 0 ? formatCurrency(numAmount) : 'Enter amount'}
-        </Button>
+        </button>
       </div>
 
       <Modal isOpen={showConfirm} onClose={() => setShowConfirm(false)} title="Confirm Investment" size="sm"
@@ -172,10 +223,10 @@ export default function BuyPage() {
         }>
         <div className="space-y-4">
           <p className="text-sm" style={{ color: '#b0c4d8' }}>You are about to invest:</p>
-          <div className="rounded-xl p-4 space-y-1" style={{ background: '#162d50', border: '1px solid rgba(27,154,245,0.15)' }}>
+          <div className="rounded-xl p-4 space-y-1" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <p className="font-bold text-white">{scheme.name}</p>
-            <p className="text-2xl font-black" style={{ color: '#42b4ff' }}>{formatCurrency(numAmount)}</p>
-            <p className="text-xs" style={{ color: '#7a94ab' }}>{mode==='sip'?`Monthly SIP on ${sipDate}th`:'One-time investment'}</p>
+            <p className="text-2xl font-black text-white">{formatCurrency(numAmount)}</p>
+            <p className="text-xs" style={{ color: '#12B4C3' }}>{mode==='sip'?`Monthly SIP on ${sipDate}th`:'One-time investment'}</p>
           </div>
           <p className="text-xs leading-relaxed" style={{ color: '#7a94ab' }}>
             ⚠️ Mutual fund investments are subject to market risks. Read all scheme related documents carefully.
