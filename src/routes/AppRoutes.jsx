@@ -36,6 +36,10 @@ import AMCInvestorsPage from '../pages/AMC/AMCInvestorsPage';
 
 // Admin Pages
 import AdminDashboard from '../pages/Admin/AdminDashboard';
+import AdminUsersPage from '../pages/Admin/AdminUsersPage';
+import AdminAMCsPage from '../pages/Admin/AdminAMCsPage';
+import AdminAnalyticsPage from '../pages/Admin/AdminAnalyticsPage';
+import AdminSettingsPage from '../pages/Admin/AdminSettingsPage';
 
 const Loader = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
@@ -105,10 +109,10 @@ export const AppRoutes = () => {
         <Route element={<RoleRoute allowedRoles={['admin']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminDashboard />} />
-            <Route path="/admin/amcs" element={<AdminDashboard />} />
-            <Route path="/admin/analytics" element={<AdminDashboard />} />
-            <Route path="/admin/settings" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/amcs" element={<AdminAMCsPage />} />
+            <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+            <Route path="/admin/settings" element={<AdminSettingsPage />} />
           </Route>
         </Route>
 
