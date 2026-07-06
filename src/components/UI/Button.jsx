@@ -7,27 +7,27 @@ const TEAL_GRAD_HOVER = 'linear-gradient(135deg, #0d8fa8 0%, #3ecfdc 100%)';
 
 const variants = {
   primary:   'text-white font-bold',
-  secondary: 'text-white font-semibold',
+  secondary: 'font-semibold border',
   ghost:     'bg-transparent font-semibold',
   danger:    'font-semibold border',
   success:   'font-semibold border',
   gradient:  'text-white font-bold',
 };
 
-const sizes = {
-  sm: 'px-4 py-1.5 text-xs',
-  md: 'px-5 py-2.5 text-sm',
-  lg: 'px-7 py-3 text-base',
-  xl: 'px-9 py-4 text-lg',
+const SIZE_STYLES = {
+  sm: { padding: '0.45rem 1rem', fontSize: '0.75rem' },
+  md: { padding: '0.625rem 1.45rem', fontSize: '0.85rem' },
+  lg: { padding: '0.875rem 1.85rem', fontSize: '0.95rem' },
+  xl: { padding: '1.125rem 2.25rem', fontSize: '1.125rem' },
 };
 
 const getStyle = (variant) => {
-  if (variant === 'primary')   return { background: TEAL_GRAD, boxShadow: '0 4px 16px rgba(11,102,126,0.3)' };
-  if (variant === 'gradient')  return { background: TEAL_GRAD, boxShadow: '0 4px 20px rgba(11,102,126,0.25)' };
-  if (variant === 'secondary') return { background: 'transparent', border: '2px solid #0B667E', color: '#0B667E' };
-  if (variant === 'ghost')     return { color: '#0B667E' };
-  if (variant === 'danger')    return { color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' };
-  if (variant === 'success')   return { color: '#10b981', borderColor: 'rgba(16,185,129,0.3)' };
+  if (variant === 'primary')   return { background: TEAL_GRAD, color: '#ffffff', border: 'none', boxShadow: '0 4px 16px rgba(18,180,195,0.3)' };
+  if (variant === 'gradient')  return { background: TEAL_GRAD, color: '#ffffff', border: 'none', boxShadow: '0 4px 20px rgba(18,180,195,0.25)' };
+  if (variant === 'secondary') return { background: 'transparent', border: '2px solid #12B4C3', color: '#12B4C3' };
+  if (variant === 'ghost')     return { color: '#7a94ab' };
+  if (variant === 'danger')    return { color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', background: 'transparent' };
+  if (variant === 'success')   return { color: '#10b981', borderColor: 'rgba(16,185,129,0.3)', background: 'transparent' };
   return {};
 };
 
@@ -41,24 +41,30 @@ export const Button = ({
     disabled={disabled || loading}
     whileHover={{ scale: disabled || loading ? 1 : 1.02 }}
     whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
-    style={{ ...getStyle(variant), ...style }}
+    style={{ ...getStyle(variant), ...SIZE_STYLES[size], ...style }}
     className={`
       inline-flex items-center justify-center gap-2 rounded-full
       transition-all duration-200 cursor-pointer
-      disabled:opacity-50 disabled:cursor-not-allowed
-      ${variants[variant]} ${sizes[size]}
+      disabled:opacity-40 disabled:cursor-not-allowed
+      ${variants[variant]}
       ${fullWidth ? 'w-full' : ''} ${className}
     `}
     onMouseEnter={e => {
       if ((variant === 'primary' || variant === 'gradient') && !disabled && !loading) {
         e.currentTarget.style.background = TEAL_GRAD_HOVER;
-        e.currentTarget.style.boxShadow = '0 6px 24px rgba(11,102,126,0.4)';
+        e.currentTarget.style.boxShadow = '0 6px 24px rgba(18,180,195,0.45)';
+      } else if (variant === 'ghost' && !disabled && !loading) {
+        e.currentTarget.style.color = '#ffffff';
+        e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
       }
     }}
     onMouseLeave={e => {
       if ((variant === 'primary' || variant === 'gradient') && !disabled && !loading) {
         e.currentTarget.style.background = TEAL_GRAD;
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(11,102,126,0.3)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(18,180,195,0.3)';
+      } else if (variant === 'ghost' && !disabled && !loading) {
+        e.currentTarget.style.color = '#7a94ab';
+        e.currentTarget.style.background = 'transparent';
       }
     }}
     {...props}
@@ -80,5 +86,3 @@ export const Button = ({
     )}
   </motion.button>
 );
-
-
