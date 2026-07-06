@@ -31,6 +31,387 @@ const Instagram = (props) => (
   </svg>
 );
 
+const WealthCompoundingAnimation3D = () => {
+  return (
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '480px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      perspective: '1000px',
+      overflow: 'hidden',
+      background: 'transparent',
+    }}>
+      {/* 3D Scene Wrapper */}
+      <div className="scene-3d" style={{
+        position: 'relative',
+        width: '320px',
+        height: '320px',
+        transformStyle: 'preserve-3d',
+        transform: 'rotateX(30deg) rotateY(-20deg) scale(1.35)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {/* Isometric Grid Floor */}
+        <div style={{
+          position: 'absolute',
+          bottom: '10%',
+          width: '280px',
+          height: '280px',
+          background: 'radial-gradient(circle, rgba(18,180,195,0.15) 0%, transparent 80%)',
+          border: '1.5px solid rgba(18,180,195,0.2)',
+          borderRadius: '24px',
+          transform: 'rotateX(90deg) translateZ(-50px)',
+          backgroundImage: 'linear-gradient(rgba(18,180,195,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(18,180,195,0.15) 1px, transparent 1px)',
+          backgroundSize: '20px 20px',
+          transformStyle: 'preserve-3d',
+        }} />
+
+        {/* 3D Pillars representing diversified assets (Equity, Debt, Gold) */}
+        {[
+          { label: 'Gold',  height: '70px',  color: '#fbbf24', delay: '0s',    pos: { x: '-60px', z: '-20px' } },
+          { label: 'Debt',  height: '110px', color: '#3b82f6', delay: '0.4s',  pos: { x: '-10px', z: '-50px' } },
+          { label: 'Equity',height: '160px', color: '#10b981', delay: '0.8s',  pos: { x: '40px',  z: '-10px' } },
+          { label: 'Hybrid',height: '130px', color: '#12B4C3', delay: '1.2s',  pos: { x: '90px',  z: '20px' } }
+        ].map((pillar, idx) => (
+          <div key={idx} style={{
+            position: 'absolute',
+            bottom: '25%',
+            left: '50%',
+            width: '28px',
+            height: pillar.height,
+            marginLeft: pillar.pos.x,
+            transform: `translateZ(${pillar.pos.z})`,
+            transformStyle: 'preserve-3d',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+          }}>
+            {/* 3D Column Faces */}
+            <div style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(to top, ${pillar.color}22, ${pillar.color}bb)`,
+              border: `1.5px solid ${pillar.color}`,
+              borderBottom: 'none',
+              borderRadius: '4px 4px 0 0',
+              transformStyle: 'preserve-3d',
+              boxShadow: `0 0 15px ${pillar.color}33`,
+              animation: `growPillar-${idx} 3s ease-in-out infinite alternate`,
+              animationDelay: pillar.delay,
+            }} />
+            {/* Pillar label overlay */}
+            <span style={{
+              position: 'absolute',
+              top: '-24px',
+              left: '50%',
+              transform: 'translateX(-50%) rotateY(20deg)',
+              color: '#d0e8f0',
+              fontSize: '0.65rem',
+              fontWeight: 700,
+              fontFamily: 'monospace',
+              letterSpacing: '0.05em',
+            }}>{pillar.label}</span>
+          </div>
+        ))}
+
+        {/* Compounding Growth Curve Path */}
+        <svg style={{
+          position: 'absolute',
+          width: '320px',
+          height: '240px',
+          transform: 'translateZ(10px)',
+          overflow: 'visible',
+        }} viewBox="0 0 320 240">
+          {/* Path Shadow */}
+          <path
+            d="M 40,200 Q 120,180 180,120 T 280,40"
+            fill="none"
+            stroke="rgba(18,180,195,0.15)"
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
+          {/* Glowing Animated Path */}
+          <path
+            className="growth-curve"
+            d="M 40,200 Q 120,180 180,120 T 280,40"
+            fill="none"
+            stroke="url(#curveGrad)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray="400"
+            strokeDashoffset="400"
+            style={{
+              animation: 'drawCurve 6s ease-in-out infinite',
+            }}
+          />
+          <defs>
+            <linearGradient id="curveGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#12B4C3" />
+              <stop offset="100%" stopColor="#10b981" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        {/* Glowing Compounding SIP Milestones along the curve */}
+        {[
+          { cx: 40,  cy: 200, label: 'SIP Start', val: '₹' },
+          { cx: 135, cy: 165, label: 'Compounding', val: '▲' },
+          { cx: 215, cy: 95,  label: 'Wealth Core', val: '★' },
+          { cx: 280, cy: 40,  label: 'Freedom', val: '✔' }
+        ].map((node, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            left: `${node.cx}px`,
+            top: `${node.cy + 30}px`,
+            transform: 'translate(-50%, -50%) translateZ(15px)',
+            transformStyle: 'preserve-3d',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            {/* Glowing dot */}
+            <div style={{
+              width: '16px',
+              height: '16px',
+              borderRadius: '50%',
+              background: i === 3 ? '#10b981' : '#12B4C3',
+              boxShadow: `0 0 15px ${i === 3 ? '#10b981' : '#12B4C3'}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: '8px',
+              fontWeight: 'bold',
+              animation: 'pulseNode 2s infinite',
+              animationDelay: `${i * 0.4}s`,
+            }}>
+              {node.val}
+            </div>
+            {/* Milestone Text */}
+            <span style={{
+              color: '#7a94ab',
+              fontSize: '0.55rem',
+              fontWeight: 700,
+              marginTop: '4px',
+              whiteSpace: 'nowrap',
+              fontFamily: 'sans-serif',
+              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+            }}>{node.label}</span>
+          </div>
+        ))}
+
+        {/* Wealth Fountain: Floating Rupee Symbols and Gold Spheres */}
+        {[
+          { delay: '0s',   left: '42%', scale: 0.9, char: '₹' },
+          { delay: '0.8s', left: '55%', scale: 1.1, char: '₹' },
+          { delay: '1.6s', left: '48%', scale: 0.7, char: '₹' },
+          { delay: '2.4s', left: '60%', scale: 1.0, char: '₹' },
+          { delay: '1.2s', left: '38%', scale: 0.8, char: '₹' }
+        ].map((coin, idx) => (
+          <div
+            key={idx}
+            style={{
+              position: 'absolute',
+              bottom: '30%',
+              left: coin.left,
+              transform: `scale(${coin.scale}) translateZ(20px)`,
+              color: '#fbbf24',
+              fontSize: '1.2rem',
+              fontWeight: 900,
+              textShadow: '0 0 10px rgba(251,191,36,0.6)',
+              opacity: 0,
+              animation: 'fountainFloat 3.5s linear infinite',
+              animationDelay: coin.delay,
+            }}
+          >
+            {coin.char}
+          </div>
+        ))}
+      </div>
+
+      {/* Embedded CSS Animations */}
+      <style>{`
+        @keyframes drawCurve {
+          0% { stroke-dashoffset: 400; }
+          40%, 100% { stroke-dashoffset: 0; }
+        }
+        @keyframes pulseNode {
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.2); filter: brightness(1.3); }
+        }
+        @keyframes fountainFloat {
+          0% { transform: translateY(0) scale(0.6); opacity: 0; }
+          10% { opacity: 0.9; }
+          80% { opacity: 0.9; }
+          100% { transform: translateY(-160px) rotate(360deg) scale(1.1); opacity: 0; }
+        }
+        @keyframes growPillar-0 {
+          0%, 100% { transform: scaleY(0.9); }
+          50% { transform: scaleY(1.05); }
+        }
+        @keyframes growPillar-1 {
+          0%, 100% { transform: scaleY(0.95); }
+          50% { transform: scaleY(1.08); }
+        }
+        @keyframes growPillar-2 {
+          0%, 100% { transform: scaleY(0.92); }
+          50% { transform: scaleY(1.06); }
+        }
+        @keyframes growPillar-3 {
+          0%, 100% { transform: scaleY(0.94); }
+          50% { transform: scaleY(1.07); }
+        }
+      `}</style>
+    </div>
+  );
+};;
+
+const FloatingTradingTickers = () => {
+  const tickerItems = [
+    { text: '▲ NIFTY 50 +1.45%', color: '#10b981', delay: '0s', duration: '20s', top: '15%', left: '10%' },
+    { text: '▲ SENSEX +1.22%', color: '#10b981', delay: '4s', duration: '25s', top: '45%', left: '5%' },
+    { text: '▼ NASDAQ -0.32%', color: '#ef4444', delay: '8s', duration: '22s', top: '75%', left: '12%' },
+    { text: '▲ HDFC Mutual +2.1%', color: '#10b981', delay: '2s', duration: '28s', top: '25%', right: '10%' },
+    { text: '▲ SBI Equity +1.85%', color: '#10b981', delay: '6s', duration: '24s', top: '55%', right: '8%' },
+    { text: '▼ Axis Bluechip -0.15%', color: '#ef4444', delay: '10s', duration: '26s', top: '80%', right: '15%' },
+  ];
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      overflow: 'hidden',
+      pointerEvents: 'none',
+      zIndex: 0,
+    }}>
+      {/* Candlestick columns floating in background */}
+      <div style={{
+        position: 'absolute',
+        top: '20%',
+        left: '20%',
+        display: 'flex',
+        gap: '24px',
+        opacity: 0.05,
+      }}>
+        {[
+          { h: '60px', w: '12px', color: '#10b981', offset: '10px' },
+          { h: '80px', w: '12px', color: '#10b981', offset: '-5px' },
+          { h: '50px', w: '12px', color: '#ef4444', offset: '15px' },
+          { h: '100px', w: '12px', color: '#10b981', offset: '0px' },
+          { h: '70px', w: '12px', color: '#10b981', offset: '-10px' },
+        ].map((candle, idx) => (
+          <div key={idx} style={{
+            position: 'relative',
+            width: candle.w,
+            height: candle.h,
+            background: candle.color,
+            borderRadius: '2px',
+            transform: `translateY(${candle.offset})`,
+            animation: 'floatCandle 4s ease-in-out infinite alternate',
+            animationDelay: `${idx * 0.5}s`,
+          }}>
+            {/* Wick */}
+            <div style={{
+              position: 'absolute',
+              top: '-15px',
+              left: '5px',
+              width: '2px',
+              height: `calc(${candle.h} + 30px)`,
+              background: candle.color,
+              zIndex: -1,
+            }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Floating tick items */}
+      {tickerItems.map((item, idx) => (
+        <div
+          key={idx}
+          style={{
+            position: 'absolute',
+            top: item.top,
+            left: item.left,
+            right: item.right,
+            color: item.color,
+            fontFamily: 'monospace',
+            fontSize: '0.85rem',
+            fontWeight: 'bold',
+            background: 'rgba(27,39,69,0.3)',
+            padding: '4px 10px',
+            borderRadius: '4px',
+            border: `1px solid ${item.color}22`,
+            boxShadow: `0 0 10px ${item.color}08`,
+            opacity: 0,
+            animation: 'floatTickerText 15s linear infinite',
+            animationDelay: item.delay,
+          }}
+        >
+          {item.text}
+        </div>
+      ))}
+
+      {/* Dynamic Wave Chart Line */}
+      <svg style={{
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        width: '100%',
+        height: '200px',
+        opacity: 0.08,
+      }} viewBox="0 0 1440 200">
+        <path
+          fill="none"
+          stroke="#12B4C3"
+          strokeWidth="3"
+          strokeDasharray="5,5"
+          d="M0,120 Q120,40 240,90 T480,110 T720,50 T960,130 T1200,70 T1440,110"
+          style={{
+            animation: 'waveDraw 12s linear infinite',
+          }}
+        />
+        <path
+          fill="none"
+          stroke="#10b981"
+          strokeWidth="2"
+          d="M0,150 Q150,70 300,120 T600,130 T900,80 T1200,140 T1440,90"
+          style={{
+            animation: 'waveDraw-2 15s linear infinite',
+          }}
+        />
+      </svg>
+
+      <style>{`
+        @keyframes floatCandle {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-15px); }
+        }
+        @keyframes floatTickerText {
+          0% { transform: translateY(15px); opacity: 0; }
+          10% { opacity: 0.35; }
+          90% { opacity: 0.35; }
+          100% { transform: translateY(-45px); opacity: 0; }
+        }
+        @keyframes waveDraw {
+          0% { stroke-dashoffset: 100; }
+          100% { stroke-dashoffset: 0; }
+        }
+        @keyframes waveDraw-2 {
+          0% { transform: translateX(0); }
+          50% { transform: translateX(-10px); }
+          100% { transform: translateX(0); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 /* --- Nav links config ----------------------------------------------- */
 const NAV_LINKS = [
   { label: 'Home',     href: '/' },
@@ -339,6 +720,9 @@ export const AuthLayout = () => {
         <div style={{ position: 'absolute', bottom: '5rem', left: '-3rem', width: '220px', height: '220px', borderRadius: '50%', border: '1.5px solid rgba(11,102,126,0.1)',   pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', top: '20%', right: '15%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(11,102,126,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
+        {/* Dynamic Trading & Mutual Fund Background Animation */}
+        <FloatingTradingTickers />
+
         {/* --- Content container --- */}
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
 
@@ -400,28 +784,11 @@ export const AuthLayout = () => {
               </motion.div>
             </div>
 
-            {/* Right Column: Arched Image Frame */}
+            {/* Right Column: 3D Investment Animation */}
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.35, duration: 0.5 }}
               className="hero-image-col" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div className="hero-image-container" style={{ position: 'relative', width: '100%', maxWidth: '380px' }}>
-                {/* Decorative shapes */}
-                <div style={{ position: 'absolute', top: '10%', right: '-15px', width: '60px', height: '60px', borderRadius: '0 60px 0 0', background: '#12B4C3', zIndex: 0 }} />
-                <div style={{ position: 'absolute', bottom: '15%', left: '-20px', width: '70px', height: '70px', borderRadius: '0 0 0 70px', background: '#0B667E', zIndex: 2 }} />
-                
-                {/* Arched frame wrapper */}
-                <div style={{
-                  position: 'relative',
-                  zIndex: 1,
-                  width: '100%',
-                  height: '420px',
-                  borderRadius: '210px 210px 30px 30px',
-                  border: '4px solid rgba(255, 255, 255, 0.15)',
-                  overflow: 'hidden',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                  background: '#1B2745',
-                }}>
-                  <img src="/stock-chart.png" alt="Stock Chart" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
+              <div className="hero-image-container" style={{ position: 'relative', width: '100%', maxWidth: '480px' }}>
+                <WealthCompoundingAnimation3D />
               </div>
             </motion.div>
           </div>
