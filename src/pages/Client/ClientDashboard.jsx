@@ -23,13 +23,13 @@ export default function ClientDashboard() {
   const { totalInvested, currentValue, totalGain, totalGainPct, dayChange, dayChangePct, holdings } = MOCK_PORTFOLIO;
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-8 pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>BE INVESTED</p>
-          <h1 className="text-2xl font-black text-white">Good evening, {user?.name?.split(' ')[0]} 👋</h1>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>BE INVESTED</p>
+          <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Good evening, {user?.name?.split(' ')[0]} 👋</h1>
           <div className="section-divider mt-2" />
         </div>
         <Link to="/client/amc">
@@ -39,30 +39,41 @@ export default function ClientDashboard() {
 
       {/* Portfolio Hero */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="rounded-2xl p-6 relative overflow-hidden" style={CARD}>
+        className="rounded-2xl p-8 lg:p-10 relative overflow-hidden" style={CARD}>
         {/* Blue top accent */}
         <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
         {/* Glow orb */}
         <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(27,154,245,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div className="space-y-1">
-            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#7a94ab' }}>Total Portfolio Value</p>
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+          <div className="space-y-2">
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#7a94ab', letterSpacing: '0.08em' }}>Total Portfolio Value</p>
             <p className="text-4xl font-black text-white">{formatCurrency(currentValue)}</p>
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-sm" style={{ color: '#7a94ab' }}>Invested: <span className="text-white font-semibold">{formatCurrency(totalInvested)}</span></span>
-              <div className={`flex items-center gap-1 text-sm font-bold ${totalGain >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                {totalGain >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                {formatCurrency(totalGain)} ({formatPercent(totalGainPct)})
+            <div className="flex items-center gap-4.5 flex-wrap pt-1 text-sm">
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: '#7a94ab', fontSize: '0.85rem' }}>Invested</span>
+                <span className="text-white font-bold" style={{ fontSize: '0.9rem' }}>{formatCurrency(totalInvested)}</span>
+              </div>
+              <div className="w-1 h-3.5 rounded-full bg-slate-700/50" />
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: '#7a94ab', fontSize: '0.85rem' }}>Total Gain</span>
+                <div className={`flex items-center gap-1 font-bold ${totalGain >= 0 ? 'text-emerald-400' : 'text-red-400'}`} style={{ fontSize: '0.9rem' }}>
+                  {totalGain >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  {formatCurrency(totalGain)} ({formatPercent(totalGainPct)})
+                </div>
+              </div>
+              <div className="w-1 h-3.5 rounded-full bg-slate-700/50" />
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: '#7a94ab', fontSize: '0.85rem' }}>Today</span>
+                <div className={`flex items-center gap-1 font-bold ${dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`} style={{ fontSize: '0.9rem' }}>
+                  {dayChange >= 0 ? '+' : ''}{formatCurrency(dayChange)} ({formatPercent(dayChangePct)})
+                </div>
               </div>
             </div>
-            <p className={`text-xs font-medium ${dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              Today: {dayChange >= 0 ? '+' : ''}{formatCurrency(dayChange)} ({formatPercent(dayChangePct)})
-            </p>
           </div>
 
-          <div className="h-28 w-full lg:w-72">
+          <div className="h-28 w-full lg:w-[420px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={PORTFOLIO_CHART}>
                 <defs>
@@ -81,28 +92,28 @@ export default function ClientDashboard() {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         <StatsCard title="Invested"   value={formatCurrency(totalInvested, true)} icon={Wallet}    accentColor="blue"    delay={0.15} />
         <StatsCard title="Total Gain" value={formatCurrency(totalGain, true)}     icon={TrendingUp} accentColor="emerald" trend={totalGainPct} trendLabel="overall" delay={0.2} />
         <StatsCard title="Holdings"   value={holdings.length} subtitle="Active schemes" icon={PieChart}  accentColor="blue"  delay={0.25} />
         <StatsCard title="SIPs Active" value="2"             subtitle="Monthly SIPs"    icon={Activity}  accentColor="amber" delay={0.3} />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
         {/* Holdings */}
-        <div className="lg:col-span-2 rounded-2xl p-6" style={CARD}>
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-2 rounded-2xl p-8 lg:p-10" style={CARD}>
+          <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-white">My Holdings</h2>
             <Link to="/client/portfolio" className="text-xs font-semibold flex items-center gap-1" style={{ color: '#42b4ff' }}>
               View all <ChevronRight size={12} />
             </Link>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {holdings.map((h, i) => (
               <motion.div key={h.schemeId} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + i * 0.08 }}
-                className="flex items-center justify-between p-3 rounded-xl transition-colors"
-                style={{ background: 'rgba(27,154,245,0.04)', border: '1px solid rgba(27,154,245,0.08)' }}
+                className="flex items-center justify-between rounded-xl transition-colors"
+                style={{ padding: '1.1rem 1.4rem', background: 'rgba(27,154,245,0.04)', border: '1px solid rgba(27,154,245,0.08)' }}
                 onMouseEnter={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.25)'}
                 onMouseLeave={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.08)'}>
                 <div className="flex-1 min-w-0">
@@ -112,7 +123,7 @@ export default function ClientDashboard() {
                 <div className="text-right ml-4">
                   <p className="text-sm font-bold text-white">{formatCurrency(h.currentValue)}</p>
                   <p className={`text-xs font-semibold ${h.gain >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {h.gain >= 0 ? '+' : ''}{formatCurrency(h.gain)} ({formatPercent(h.gainPct)})
+                     {h.gain >= 0 ? '+' : ''}{formatCurrency(h.gain)} ({formatPercent(h.gainPct)})
                   </p>
                 </div>
               </motion.div>
@@ -121,27 +132,27 @@ export default function ClientDashboard() {
         </div>
 
         {/* Recent Txns */}
-        <div className="rounded-2xl p-6" style={CARD}>
-          <div className="flex items-center justify-between mb-4">
+        <div className="rounded-2xl p-8 lg:p-10" style={CARD}>
+          <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-white">Recent</h2>
             <Link to="/client/transactions" className="text-xs font-semibold flex items-center gap-1" style={{ color: '#42b4ff' }}>
               View all <ChevronRight size={12} />
             </Link>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-0">
             {MOCK_TRANSACTIONS.slice(0, 4).map((txn, i) => (
               <motion.div key={txn.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 + i * 0.06 }}
-                className="flex items-start gap-3 pb-3 last:pb-0"
-                style={{ borderBottom: '1px solid rgba(27,154,245,0.06)' }}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0"
+                className="flex items-start gap-4 last:pb-0"
+                style={{ paddingBottom: '1.1rem', paddingTop: '1.1rem', borderBottom: i < 3 ? '1px solid rgba(27,154,245,0.06)' : 'none' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-base flex-shrink-0"
                   style={{ background: 'rgba(27,154,245,0.1)' }}>
                   {txn.type === 'BUY' ? '💰' : '🔄'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-white truncate">{txn.schemeName}</p>
-                  <p className="text-xs" style={{ color: '#7a94ab' }}>{formatDate(txn.date)}</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#7a94ab' }}>{formatDate(txn.date)}</p>
                 </div>
-                <div className="text-right">
+                <div className="text-right ml-2 flex-shrink-0">
                   <p className="text-xs font-bold text-white">₹{txn.amount.toLocaleString('en-IN')}</p>
                   <Badge variant={getStatusColor(txn.status).replace('badge-', '')} className="mt-0.5">{txn.status}</Badge>
                 </div>
@@ -160,12 +171,12 @@ export default function ClientDashboard() {
             backgroundImage: 'linear-gradient(rgba(27,154,245,0.5) 1px, transparent 1px), linear-gradient(90deg,rgba(27,154,245,0.5) 1px, transparent 1px)',
             backgroundSize: '40px 40px',
           }} />
-        <div className="relative p-6">
+        <div className="relative p-8 lg:p-10">
           <p className="text-xs font-bold uppercase tracking-widest text-center mb-5" style={{ color: '#42b4ff' }}>Our AMC Partners</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {MOCK_AMC_LIST.slice(0, 4).map(amc => (
               <Link key={amc.id} to={`/client/schemes?amc=${amc.id}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl transition-all group"
+                className="flex flex-col items-center gap-2 p-5 lg:p-6 rounded-xl transition-all group"
                 style={{ background: 'rgba(27,154,245,0.06)', border: '1px solid rgba(27,154,245,0.12)' }}
                 onMouseEnter={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.4)'}
                 onMouseLeave={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.12)'}>

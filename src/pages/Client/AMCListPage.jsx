@@ -44,29 +44,42 @@ export default function AMCListPage() {
         ))}
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((amc, i) => (
-          <motion.div key={amc.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
+          <motion.div
+            key={amc.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.025, translateY: -4 }}
+            whileTap={{ scale: 0.975 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          >
             <Link to={`/client/schemes?amc=${amc.id}`}
-              className="flex flex-col h-full rounded-2xl p-5 card-hover group" style={CARD}
+              className="flex flex-col h-full rounded-2xl p-6 lg:p-7 card-hover group" style={CARD}
               id={`amc-card-${amc.id}`}>
               <div className="flex items-start justify-between mb-4">
-                <span className="text-4xl group-hover:scale-110 transition-transform">{amc.logo}</span>
-                <div className="flex items-center gap-1 rounded-full px-2 py-0.5" style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
-                  <Star size={10} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+                <span className="text-3xl lg:text-4xl group-hover:scale-110 transition-transform">{amc.logo}</span>
+                <div className="flex items-center gap-1 rounded-full px-2.5 py-0.5" style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
+                  <Star size={11} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
                   <span className="text-xs font-bold" style={{ color: '#fbbf24' }}>{amc.rating}</span>
                 </div>
               </div>
-              <h3 className="font-bold text-white text-sm leading-snug mb-1">{amc.name}</h3>
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full self-start mb-3" style={{ background: 'rgba(27,154,245,0.1)', color: '#42b4ff' }}>
+              <h3 className="font-black text-white text-base lg:text-lg leading-snug mb-1.5" style={{ fontFamily: 'Poppins, sans-serif' }}>{amc.name}</h3>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-3" style={{ background: 'rgba(27,154,245,0.1)', color: '#42b4ff' }}>
                 {amc.category}
               </span>
-              <div className="mt-auto grid grid-cols-2 gap-2 pt-3" style={{ borderTop: '1px solid rgba(27,154,245,0.08)' }}>
-                <div><p className="text-xs" style={{ color: '#7a94ab' }}>AUM</p><p className="text-sm font-bold text-white">₹{amc.aum} Cr</p></div>
-                <div><p className="text-xs" style={{ color: '#7a94ab' }}>Funds</p><p className="text-sm font-bold text-white">{amc.fundCount}</p></div>
+              <div className="mt-auto grid grid-cols-2 gap-3 pt-3" style={{ borderTop: '1px solid rgba(27,154,245,0.08)' }}>
+                <div>
+                  <p className="text-xs font-semibold" style={{ color: '#7a94ab' }}>AUM</p>
+                  <p className="text-base lg:text-lg font-black text-white mt-0.5">₹{amc.aum} Cr</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold" style={{ color: '#7a94ab' }}>Funds</p>
+                  <p className="text-base lg:text-lg font-black text-white mt-0.5">{amc.fundCount}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-1 mt-3 text-xs font-semibold" style={{ color: '#42b4ff' }}>
-                View Schemes <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
+              <div className="flex items-center gap-1 mt-3.5 text-xs font-bold" style={{ color: '#42b4ff' }}>
+                View Schemes <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
           </motion.div>

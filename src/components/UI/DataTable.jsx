@@ -3,7 +3,7 @@ import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucid
 import { Spinner, EmptyState } from './Badge';
 
 export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'No data found',
-  emptyDescription = '', searchable = false, searchPlaceholder = 'Search...', pageSize = 10, onRowClick }) => {
+  emptyDescription = '', searchable = false, searchPlaceholder = 'Search...', pageSize = 10, variant = 'dark', onRowClick }) => {
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
   const [page, setPage]       = useState(1);
@@ -48,7 +48,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
 
       <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(27,154,245,0.1)' }}>
         <div className="overflow-x-auto">
-          <table className="data-table">
+          <table className={`data-table ${variant === 'dark' ? 'data-table-dark' : ''}`}>
             <thead>
               <tr>
                 {columns.map(col => (

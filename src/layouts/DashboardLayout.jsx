@@ -8,16 +8,16 @@ export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen" style={{ background: '#F5F4F7' }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ background: '#0B1329' }}>
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
-      <div className="flex pt-[90px]">
+      <div className="flex pt-[110px] gap-8 lg:gap-10">
+        {/* Desktop Sidebar Spacer */}
+        <div className="hidden lg:block w-80 flex-shrink-0" />
+
         {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-64 flex-shrink-0">
-          <div className="fixed left-0 top-[90px] bottom-0 w-64 overflow-y-auto"
-            style={{ background: '#202C44', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-            <Sidebar isOpen={true} onClose={() => {}} />
-          </div>
+        <div className="hidden lg:block">
+          <Sidebar isOpen={true} onClose={() => { }} />
         </div>
 
         {/* Mobile Sidebar */}
@@ -26,7 +26,7 @@ export const DashboardLayout = () => {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 p-4 lg:p-6">
+        <main className="min-w-0 p-6 lg:p-10 max-w-[1100px] mx-auto w-full">
           <Outlet />
         </main>
       </div>

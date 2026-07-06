@@ -278,16 +278,6 @@ const Footer = () => (
 
 /* --- AuthLayout ----------------------------------------------------- */
 export const AuthLayout = () => {
-  const [wordIndex, setWordIndex] = useState(0);
-  const words = ['The Rewards', 'Your Wealth', 'Your Future', 'Your Dreams'];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setWordIndex(prev => (prev + 1) % words.length);
-    }, 2500);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#1B2745' }}>
 
@@ -322,72 +312,95 @@ export const AuthLayout = () => {
         <div style={{ position: 'absolute', top: '20%', right: '15%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(11,102,126,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         {/* --- Content container --- */}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '860px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
 
-          {/* 1 - Eyebrow */}
-          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#12B4C3', marginBottom: '1rem', textAlign: 'center' }}>
-            BE INVESTED
-          </motion.p>
+          {/* Hero Grid Section */}
+          <div className="hero-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr',
+            gap: '2.5rem',
+            alignItems: 'center',
+            marginBottom: '4rem',
+          }}>
+            {/* Left Column: Hero Text & Details */}
+            <div className="hero-text-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              {/* 1 - Eyebrow */}
+              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#12B4C3', marginBottom: '1rem' }}>
+                BE INVESTED
+              </motion.p>
 
-          {/* 2 - Heading */}
-          <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
-            style={{ fontSize: 'clamp(2.2rem, 5vw, 3.75rem)', fontWeight: 900, color: '#fff', lineHeight: 1.15,
-              marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Poppins, sans-serif' }}>
-            <span>Invest With Confidence</span>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', width: '100%', flexWrap: 'wrap' }}>
-              <span>Harvest</span>
-              <span style={{ position: 'relative', display: 'inline-block', width: '300px', height: '1.2em', textAlign: 'left', overflow: 'hidden' }}>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={wordIndex}
-                    initial={{ y: 25, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -25, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: 'easeInOut' }}
-                    style={{ position: 'absolute', left: 0, top: 0, width: '100%', color: '#12B4C3' }}
-                  >
-                    {words[wordIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
+              {/* 2 - Heading */}
+              <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
+                style={{ fontSize: 'clamp(2.2rem, 5vw, 3.75rem)', fontWeight: 900, color: '#fff', lineHeight: 1.15,
+                  marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Poppins, sans-serif' }}>
+                <span>Invest With Confidence</span>
+                <span style={{ color: '#12B4C3' }}>Harvest the rewards</span>
+              </motion.h1>
+
+              {/* 3 - Subtext */}
+              <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+                style={{ fontSize: '1rem', color: '#b0c4d8', lineHeight: 1.75, maxWidth: '520px', margin: '0 auto 2.25rem' }}>
+                Access 3,000+ mutual fund schemes from 42 AMCs. Real-time NAV tracking, portfolio analytics, and SIP management.
+              </motion.p>
+
+              {/* 4 - CTA row */}
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                className="hero-cta-row"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '0.625rem',
+                  padding: '0.8rem 1.75rem', borderRadius: '50px',
+                  color: '#fff', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
+                  background: 'linear-gradient(135deg,#0B667E,#12B4C3)',
+                  boxShadow: '0 0 24px rgba(11,102,126,0.4)',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 32px rgba(11,102,126,0.55)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 0 24px rgba(11,102,126,0.4)'; }}>
+                  <span>Get Started</span><span> →</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(11,102,126,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Phone size={16} color="#12B4C3" />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.7rem', color: '#7a94ab', textAlign: 'left' }}>Need help?</p>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#fff', textAlign: 'left' }}>(808) 555-0111</p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </motion.h1>
 
-          {/* 3 - Subtext */}
-          <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-            style={{ fontSize: '1rem', color: '#b0c4d8', lineHeight: 1.75, maxWidth: '520px', margin: '0 auto 2.25rem', textAlign: 'center' }}>
-            Access 3,000+ mutual fund schemes from 42 AMCs. Real-time NAV tracking, portfolio analytics, and SIP management.
-          </motion.p>
-
-          {/* 4 - CTA row */}
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.625rem',
-              padding: '0.8rem 1.75rem', borderRadius: '50px',
-              color: '#fff', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
-              background: 'linear-gradient(135deg,#0B667E,#12B4C3)',
-              boxShadow: '0 0 24px rgba(11,102,126,0.4)',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 32px rgba(11,102,126,0.55)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 0 24px rgba(11,102,126,0.4)'; }}>
-              <span>Get Started</span><span> →</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(11,102,126,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Phone size={16} color="#12B4C3" />
+            {/* Right Column: Arched Image Frame */}
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.35, duration: 0.5 }}
+              className="hero-image-col" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div className="hero-image-container" style={{ position: 'relative', width: '100%', maxWidth: '380px' }}>
+                {/* Decorative shapes */}
+                <div style={{ position: 'absolute', top: '10%', right: '-15px', width: '60px', height: '60px', borderRadius: '0 60px 0 0', background: '#12B4C3', zIndex: 0 }} />
+                <div style={{ position: 'absolute', bottom: '15%', left: '-20px', width: '70px', height: '70px', borderRadius: '0 0 0 70px', background: '#0B667E', zIndex: 2 }} />
+                
+                {/* Arched frame wrapper */}
+                <div style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  width: '100%',
+                  height: '420px',
+                  borderRadius: '210px 210px 30px 30px',
+                  border: '4px solid rgba(255, 255, 255, 0.15)',
+                  overflow: 'hidden',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                  background: '#1B2745',
+                }}>
+                  <img src="/stock-chart.png" alt="Stock Chart" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
               </div>
-              <div>
-                <p style={{ fontSize: '0.7rem', color: '#7a94ab' }}>Need help?</p>
-                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#fff' }}>(808) 555-0111</p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* 5 - Stats row */}
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+            className="auth-stats-grid"
             style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.875rem', marginBottom: '2rem' }}>
             {[
               { label: 'Active Investors', value: '3L+' },
@@ -422,15 +435,15 @@ export const AuthLayout = () => {
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.45 }}
             style={{
               width: '100%',
-              maxWidth: '500px',
+              maxWidth: '1040px',
               margin: '0 auto',
-              background: 'rgba(27, 43, 73, 0.45)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '24px',
-              padding: '2.5rem 2rem',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+              background: 'rgba(21, 34, 63, 0.65)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(18, 180, 195, 0.15)',
+              borderRadius: '28px',
+              padding: '3rem 2.5rem',
+              boxShadow: '0 30px 60px rgba(0, 0, 0, 0.4)',
             }}>
             <Outlet />
           </motion.div>
@@ -446,6 +459,42 @@ export const AuthLayout = () => {
         .auth-mobile-logo { display: none !important; }
         .auth-nav-desktop { display: flex !important; }
         .auth-nav-mobile  { display: none !important; }
+
+        @media (min-width: 1024px) {
+          .hero-grid {
+            grid-template-columns: 1.2fr 1.0fr !important;
+            gap: 4rem !important;
+          }
+          .hero-text-col {
+            align-items: flex-start !important;
+            text-align: left !important;
+          }
+          .hero-text-col h1 {
+            align-items: flex-start !important;
+            text-align: left !important;
+          }
+          .hero-text-col p {
+            text-align: left !important;
+            margin-left: 0 !important;
+          }
+          .hero-cta-row {
+            justify-content: flex-start !important;
+          }
+        }
+
+        .auth-card-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+          align-items: start;
+        }
+
+        @media (min-width: 768px) {
+          .auth-card-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 3.5rem !important;
+          }
+        }
 
         @media (max-width: 768px) {
           .auth-nav-desktop { display: none !important; }

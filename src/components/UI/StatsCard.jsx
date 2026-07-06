@@ -17,22 +17,20 @@ export const StatsCard = ({ title, value, subtitle, icon: Icon, trend, trendLabe
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.35 }}
-      className={`rounded-2xl p-6 card card-hover ${className}`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="ds-eyebrow mb-2">{title}</p>
-          <p style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1B2745', lineHeight: 1.1, marginTop: '4px', fontFamily: 'Poppins, sans-serif' }}>{value}</p>
-          {subtitle && <p className="text-sm mt-1 ds-body">{subtitle}</p>}
-          {trend !== undefined && (
-            <div className={`flex items-center gap-1 mt-2 text-xs font-semibold ${isPos ? 'text-emerald-600' : 'text-red-500'}`}>
-              {isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-              <span>{isPos ? '+' : ''}{trend}% {trendLabel || 'vs last month'}</span>
-            </div>
-          )}
+      className={`rounded-2xl p-8 card card-hover flex flex-col items-center text-center ${className}`}>
+      {Icon && (
+        <div className="p-3.5 rounded-xl mb-4" style={{ background: c.bg, boxShadow: '0 4px 12px rgba(11,102,126,0.25)' }}>
+          <Icon size={24} style={{ color: c.icon }} />
         </div>
-        {Icon && (
-          <div className="p-3 rounded-xl" style={{ background: c.bg, boxShadow: '0 4px 12px rgba(11,102,126,0.25)' }}>
-            <Icon size={22} style={{ color: c.icon }} />
+      )}
+      <div className="w-full">
+        <p className="ds-eyebrow mb-1.5">{title}</p>
+        <p style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1B2745', lineHeight: 1.1, fontFamily: 'Poppins, sans-serif' }}>{value}</p>
+        {subtitle && <p className="text-sm mt-1.5 ds-body">{subtitle}</p>}
+        {trend !== undefined && (
+          <div className={`flex items-center justify-center gap-1 mt-2.5 text-xs font-semibold ${isPos ? 'text-emerald-600' : 'text-red-500'}`}>
+            {isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+            <span>{isPos ? '+' : ''}{trend}% {trendLabel || 'vs last month'}</span>
           </div>
         )}
       </div>

@@ -61,18 +61,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-body {
-  font-family: var(--font-sans);
-  background-color: #FFFFFF;
-  color: #5F6B7A;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #FFFFFF;
+    color: #5F6B7A;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  color: #1B2745;
-  font-weight: 700;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: #1B2745;
+    font-weight: 700;
+  }
 }
 
 #root { min-height: 100vh; display: flex; flex-direction: column; }
@@ -338,4 +340,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 .recharts-legend-item-text { color: #5F6B7A !important; }
 .recharts-cartesian-grid line { stroke: rgba(27,39,69,0.06) !important; }
+
+/* Table alignment override */
+.data-table th, .data-table td {
+  vertical-align: middle;
+}
+
+/* ══════════════════ DATA TABLE DARK ══════════════════ */
+.data-table-dark th {
+  background: rgba(255,255,255,0.03) !important;
+  color: #7a94ab !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  padding: 1.1rem 1.25rem !important;
+  vertical-align: middle !important;
+}
+.data-table-dark td {
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+  padding: 1.2rem 1.25rem !important;
+  vertical-align: middle !important;
+}
+.data-table-dark tr:hover td {
+  background: rgba(27,154,245,0.04) !important;
+}
 

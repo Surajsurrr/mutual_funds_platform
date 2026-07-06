@@ -37,24 +37,24 @@ export default function TransactionHistoryPage() {
         <Button variant="secondary" icon={Download} size="sm" id="export-txn">Export CSV</Button>
       </motion.div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
         {[
           { label:'Total Transactions', val: MOCK_TRANSACTIONS.length,   color: '#42b4ff' },
           { label:'Total Invested',     val: formatCurrency(successTxns.reduce((a,t)=>a+t.amount,0),true), color: '#fff' },
           { label:'Successful',         val: successTxns.length,         color: '#34d399' },
           { label:'Failed',             val: MOCK_TRANSACTIONS.filter(t=>t.status==='failed').length, color: '#f87171' },
         ].map(s => (
-          <div key={s.label} className="rounded-xl p-4" style={{ background: '#0f2442', border: '1px solid rgba(27,154,245,0.08)' }}>
-            <p className="text-xs" style={{ color: '#7a94ab' }}>{s.label}</p>
-            <p className="text-xl font-black mt-1" style={{ color: s.color }}>{s.val}</p>
+          <div key={s.label} className="rounded-xl p-6 lg:p-7" style={{ background: '#0f2442', border: '1px solid rgba(27,154,245,0.08)' }}>
+            <p className="text-xs font-semibold" style={{ color: '#7a94ab' }}>{s.label}</p>
+            <p className="text-2xl font-black mt-1.5" style={{ color: s.color }}>{s.val}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3 pt-2">
         {['All','BUY','SIP','REDEEM'].map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className="px-4 py-1.5 rounded-full text-xs font-semibold border transition-all"
+            className="px-4.5 py-2 rounded-full text-xs font-bold border transition-all"
             style={filter === f
               ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', borderColor: 'transparent' }
               : { background: 'rgba(27,154,245,0.06)', color: '#b0c4d8', borderColor: 'rgba(27,154,245,0.15)' }}>
@@ -63,7 +63,7 @@ export default function TransactionHistoryPage() {
         ))}
       </div>
 
-      <div className="rounded-2xl p-6" style={CARD}>
+      <div className="rounded-2xl p-8 lg:p-10" style={CARD}>
         <DataTable columns={columns} data={filtered} searchable searchPlaceholder="Search transactions..." pageSize={8} />
       </div>
     </div>

@@ -61,31 +61,35 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
       <motion.aside
         initial={false}
-        animate={{ x: isOpen ? 0 : '-100%' }}
+        animate={typeof window !== 'undefined' && window.innerWidth < 1024 ? { x: isOpen ? 0 : '-100%' } : { x: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed left-0 top-0 bottom-0 z-30 w-64 flex flex-col pt-[90px] lg:translate-x-0 lg:static lg:pt-0"
+        className="fixed left-0 top-0 bottom-0 z-30 w-80 flex flex-col pt-[90px] lg:top-[110px] lg:pt-0 lg:translate-x-0"
         style={{ background: '#202C44', borderRight: '1px solid rgba(255,255,255,0.06)' }}
       >
         {/* Role header */}
-        <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg" style={{ background: 'rgba(18,180,195,0.15)' }}>
-              <meta.icon size={15} style={{ color: meta.color }} />
+        <div style={{ padding: '1.75rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="flex items-center gap-3.5">
+            <div style={{
+              width: '42px', height: '42px', borderRadius: '12px',
+              background: 'rgba(18,180,195,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <meta.icon size={18} style={{ color: meta.color }} />
             </div>
             <div>
-              <p className="text-xs font-bold" style={{ color: meta.color, fontFamily: 'Poppins, sans-serif' }}>{meta.label}</p>
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>ID: {user?.id || 'USR000'}</p>
+              <p className="text-sm font-black" style={{ color: meta.color, fontFamily: 'Poppins, sans-serif' }}>{meta.label}</p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>ID: {user?.id || 'USR000'}</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
+        <nav className="flex-1 overflow-y-auto px-5 py-8 space-y-3.5">
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to}
               onClick={() => window.innerWidth < 1024 && onClose()}
               className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                flex items-center gap-3.5 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all
                 ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}
               `}
               style={({ isActive }) => isActive
@@ -93,7 +97,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 : {}}>
               {({ isActive }) => (
                 <>
-                  <item.icon size={16} style={{ color: isActive ? '#fff' : '#7a94ab' }} />
+                  <item.icon size={18} style={{ color: isActive ? '#fff' : '#7a94ab' }} />
                   {item.label}
                 </>
               )}
@@ -102,11 +106,15 @@ export const Sidebar = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="rounded-xl p-3 text-center"
-            style={{ background: 'rgba(18,180,195,0.1)', border: '1px solid rgba(18,180,195,0.2)' }}>
-            <p className="text-xs font-bold" style={{ color: '#12B4C3', fontFamily: 'Poppins, sans-serif' }}>FundFlow v1.0.0</p>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>SEBI Registered Platform</p>
+        <div className="p-6 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="rounded-xl text-center"
+            style={{
+              padding: '1.25rem 1.4rem',
+              background: 'rgba(18,180,195,0.1)',
+              border: '1px solid rgba(18,180,195,0.2)',
+            }}>
+            <p className="text-xs font-extrabold" style={{ color: '#12B4C3', fontFamily: 'Poppins, sans-serif' }}>FundFlow v1.0.0</p>
+            <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>SEBI Registered Platform</p>
           </div>
         </div>
       </motion.aside>

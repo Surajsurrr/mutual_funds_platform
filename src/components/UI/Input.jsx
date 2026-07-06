@@ -31,7 +31,8 @@ export const Input = forwardRef(({
         <input
           ref={ref}
           className={`
-            ${variant === 'dark' ? 'input-field-dark' : 'input-field'}
+            input-field
+            ${variant === 'dark' ? 'input-field-dark' : ''}
             ${Icon ? 'pl-10' : ''}
             ${rightElement ? 'pr-12' : ''}
             ${error ? 'border-rose-500/50 focus:border-rose-500' : ''}
