@@ -33,7 +33,7 @@ export default function RegisterPage() {
       setLoading(true);
       await new Promise(r => setTimeout(r, 1500));
       login({ id: 'USR' + Math.floor(Math.random()*100000), name: merged.name, email: merged.email, role: 'client', kycStatus: 'pending', joinedAt: new Date().toISOString().split('T')[0] }, 'mock_jwt_client');
-      toast.success('Account created! Welcome to FundFlow 🎉');
+      toast.success('Account created! Welcome to FundFlow');
       navigate('/client/dashboard');
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function RegisterPage() {
 
         {/* Vertical Stepper Stack */}
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#12B4C3' }}>📋 Registration Progress</p>
+          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#12B4C3' }}>Registration Progress</p>
           <div className="space-y-3">
             {STEP_DETAILS.map((sDetail, i) => {
               const StepIcon = sDetail.icon;

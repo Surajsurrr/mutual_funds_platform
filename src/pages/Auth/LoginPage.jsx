@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, TrendingUp, Landmark, Building2, Settings } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, TrendingUp, Landmark, Building2, Settings, ShieldCheck, LockKeyhole, Star } from 'lucide-react';
 import { Button } from '../../components/UI/Button';
 import { Input } from '../../components/UI/Input';
 import { useAuthStore } from '../../store/authStore';
@@ -78,7 +78,7 @@ export default function LoginPage() {
               return (
                 <button key={acc.role}
                   type="button"
-                  onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo: ${acc.label}`, { icon: '🔑' }); }}
+                  onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo Autofilled: ${acc.label}`); }}
                   className="w-full text-left rounded-xl transition-all flex items-center gap-4.5"
                   style={{
                     padding: '1.1rem 1.4rem',
@@ -112,6 +112,21 @@ export default function LoginPage() {
                 </button>
               );
             })}
+        </div>
+
+        {/* Trust Badges */}
+        <div className="mt-auto pt-6 flex flex-wrap items-center gap-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <ShieldCheck size={15} className="text-emerald-400" />
+            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>SEBI Registered</span>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <LockKeyhole size={14} className="text-cyan-400" />
+            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>256-bit SSL</span>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Star size={14} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>4.9 App Rating</span>
           </div>
         </div>
       </div>
