@@ -5,7 +5,15 @@ import { Search, Star, ChevronRight } from 'lucide-react';
 import { MOCK_AMC_LIST } from '../../utils/mockData';
 
 const CATEGORIES = ['All','Large Cap','Equity','Diversified','Debt','Balanced','Index','Multi Cap','Growth','Value'];
-const CARD = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.1)' };
+
+const CARD = {
+  background: 'rgba(255,255,255,0.03)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  padding: '2rem',
+};
 
 export default function AMCListPage() {
   const [search, setSearch]     = useState('');
@@ -18,32 +26,50 @@ export default function AMCListPage() {
   });
 
   return (
-    <div className="space-y-6 pb-8">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>Browse Partners</p>
-        <h1 className="text-2xl font-black text-white">AMC Companies</h1>
-        <div className="section-divider mt-2" />
-        <p className="text-sm mt-3" style={{ color: '#7a94ab' }}>Choose from {MOCK_AMC_LIST.length} trusted Asset Management Companies</p>
+    <div className="pb-8">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        style={{ marginBottom: '2.25rem' }}>
+        <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Browse Partners</p>
+        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>AMC Companies</h1>
+        <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
+        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Choose from {MOCK_AMC_LIST.length} trusted Asset Management Companies</p>
       </motion.div>
 
-      <div className="relative max-w-md">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#7a94ab' }} />
+      {/* Search Input Container */}
+      <div className="relative max-w-md" style={{ marginBottom: '1.75rem' }}>
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#12B4C3' }} />
         <input type="text" placeholder="Search AMC by name..." value={search} onChange={e => setSearch(e.target.value)}
-          className="input-field pl-10 w-full" id="amc-search" />
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '14px',
+            color: '#ffffff',
+            padding: '0.875rem 1rem 0.875rem 2.75rem',
+            outline: 'none',
+            fontSize: '0.875rem',
+            width: '100%',
+            fontFamily: 'Inter, sans-serif',
+            transition: 'border-color 0.2s',
+          }}
+          className="focus:border-[#12B4C3]"
+          id="amc-search" />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      {/* Categories Tabs Filter */}
+      <div className="flex gap-2 overflow-x-auto pb-1.5" style={{ marginBottom: '2.25rem' }}>
         {CATEGORIES.map(cat => (
           <button key={cat} onClick={() => setCategory(cat)}
-            className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all border"
+            className="flex-shrink-0 rounded-full transition-all border"
             style={category === cat
-              ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', borderColor: 'transparent', boxShadow: '0 2px 12px rgba(27,154,245,0.3)' }
-              : { background: 'rgba(27,154,245,0.06)', color: '#b0c4d8', borderColor: 'rgba(27,154,245,0.15)' }}>
+              ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', borderColor: 'transparent', boxShadow: '0 4px 12px rgba(18,180,195,0.25)', fontSize: '0.825rem', fontWeight: 700, padding: '0.55rem 1.25rem' }
+              : { background: 'rgba(255,255,255,0.03)', color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.06)', fontSize: '0.825rem', fontWeight: 600, padding: '0.55rem 1.25rem' }}>
             {cat}
           </button>
         ))}
       </div>
 
+      {/* AMC Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((amc, i) => (
           <motion.div
@@ -55,7 +81,7 @@ export default function AMCListPage() {
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
             <Link to={`/client/schemes?amc=${amc.id}`}
-              className="flex flex-col h-full rounded-2xl p-6 lg:p-7 card-hover group" style={CARD}
+              className="flex flex-col h-full rounded-2xl card-hover group" style={CARD}
               id={`amc-card-${amc.id}`}>
               <div className="flex items-start justify-between mb-4">
                 <span className="text-3xl lg:text-4xl group-hover:scale-110 transition-transform">{amc.logo}</span>
@@ -65,10 +91,10 @@ export default function AMCListPage() {
                 </div>
               </div>
               <h3 className="font-black text-white text-base lg:text-lg leading-snug mb-1.5" style={{ fontFamily: 'Poppins, sans-serif' }}>{amc.name}</h3>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-3" style={{ background: 'rgba(27,154,245,0.1)', color: '#42b4ff' }}>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-3" style={{ background: 'rgba(18,180,195,0.1)', color: '#12B4C3' }}>
                 {amc.category}
               </span>
-              <div className="mt-auto grid grid-cols-2 gap-3 pt-3" style={{ borderTop: '1px solid rgba(27,154,245,0.08)' }}>
+              <div className="mt-auto grid grid-cols-2 gap-3 pt-4.5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 <div>
                   <p className="text-xs font-semibold" style={{ color: '#7a94ab' }}>AUM</p>
                   <p className="text-base lg:text-lg font-black text-white mt-0.5">₹{amc.aum} Cr</p>
@@ -78,7 +104,7 @@ export default function AMCListPage() {
                   <p className="text-base lg:text-lg font-black text-white mt-0.5">{amc.fundCount}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 mt-3.5 text-xs font-bold" style={{ color: '#42b4ff' }}>
+              <div className="flex items-center gap-1 mt-4.5 text-xs font-bold" style={{ color: '#12B4C3' }}>
                 View Schemes <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
