@@ -34,21 +34,35 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
   const totalPages = Math.ceil(sorted.length / pageSize);
   const paginated  = sorted.slice((page - 1) * pageSize, page * pageSize);
 
+  const isDark = variant === 'dark';
+
   return (
     <div className="flex flex-col gap-4">
       {searchable && (
-        <div className="relative max-w-sm">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#7a94ab' }} />
+        <div className="relative max-w-sm" style={{ marginBottom: '0.5rem' }}>
+          <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: isDark ? '#12B4C3' : '#7a94ab' }} />
           <input type="text" value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder={searchPlaceholder}
-            className="input-field pl-9 py-2 text-sm" />
+            style={isDark ? {
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '12px',
+              color: '#ffffff',
+              padding: '0.625rem 1rem 0.625rem 2.5rem',
+              outline: 'none',
+              fontSize: '0.85rem',
+              width: '100%',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'border-color 0.2s',
+            } : {}}
+            className={isDark ? 'focus:border-[#12B4C3]' : 'input-field pl-9 py-2 text-sm'} />
         </div>
       )}
 
-      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(27,154,245,0.1)' }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,154,245,0.1)' }}>
         <div className="overflow-x-auto">
-          <table className={`data-table ${variant === 'dark' ? 'data-table-dark' : ''}`}>
+          <table className={`data-table ${isDark ? 'data-table-dark' : ''}`}>
             <thead>
               <tr>
                 {columns.map(col => (
@@ -58,8 +72,8 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
                       {col.header}
                       {col.sortable && (
                         <span className="flex flex-col">
-                          <ChevronUp  size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'asc'  ? '#1b9af5' : '#264470' }} />
-                          <ChevronDown size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'desc' ? '#1b9af5' : '#264470' }} />
+                          <ChevronUp  size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'asc'  ? (isDark ? '#12B4C3' : '#1b9af5') : '#264470' }} />
+                          <ChevronDown size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'desc' ? (isDark ? '#12B4C3' : '#1b9af5') : '#264470' }} />
                         </span>
                       )}
                     </div>
@@ -88,7 +102,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm" style={{ color: '#7a94ab' }}>
+        <div className="flex items-center justify-between text-sm mt-2" style={{ color: '#7a94ab' }}>
           <span>
             Showing {Math.min((page-1)*pageSize+1, sorted.length)}–{Math.min(page*pageSize, sorted.length)} of {sorted.length}
           </span>
@@ -96,7 +110,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
             <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page===1}
               className="p-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ color: '#b0c4d8' }}
-              onMouseEnter={e => e.currentTarget.style.background='rgba(27,154,245,0.1)'}
+              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(27,154,245,0.1)'}
               onMouseLeave={e => e.currentTarget.style.background='transparent'}>
               <ChevronLeft size={16} />
             </button>
@@ -107,7 +121,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
                 <button key={pg} onClick={() => setPage(pg)}
                   className="w-8 h-8 rounded-lg text-xs font-semibold transition-all"
                   style={pg === page
-                    ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff' }
+                    ? { background: isDark ? 'linear-gradient(135deg,#0B667E,#12B4C3)' : 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', boxShadow: isDark ? '0 4px 12px rgba(18,180,195,0.25)' : '' }
                     : { color: '#7a94ab' }}>
                   {pg}
                 </button>
@@ -116,7 +130,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
             <button onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={page===totalPages}
               className="p-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ color: '#b0c4d8' }}
-              onMouseEnter={e => e.currentTarget.style.background='rgba(27,154,245,0.1)'}
+              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(27,154,245,0.1)'}
               onMouseLeave={e => e.currentTarget.style.background='transparent'}>
               <ChevronRight size={16} />
             </button>

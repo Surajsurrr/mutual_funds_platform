@@ -7,7 +7,14 @@ import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { formatDate, formatCurrency, getStatusColor } from '../../utils/formatters';
 
-const CARD = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' };
+const CARD = {
+  background: 'rgba(255,255,255,0.03)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  padding: '2.25rem',
+};
 
 export default function TransactionHistoryPage() {
   const [filter, setFilter] = useState('All');
@@ -26,44 +33,57 @@ export default function TransactionHistoryPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="pb-8">
+      {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between flex-wrap gap-4">
+        className="flex items-center justify-between flex-wrap gap-4"
+        style={{ marginBottom: '2.25rem' }}>
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>History</p>
-          <h1 className="text-2xl font-black text-white">Transactions</h1>
-          <div className="section-divider mt-2" />
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>History</p>
+          <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Transactions</h1>
+          <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
         </div>
         <Button variant="secondary" icon={Download} size="sm" id="export-txn">Export CSV</Button>
       </motion.div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
         {[
-          { label:'Total Transactions', val: MOCK_TRANSACTIONS.length,   color: '#42b4ff' },
+          { label:'Total Transactions', val: MOCK_TRANSACTIONS.length,   color: '#12B4C3' },
           { label:'Total Invested',     val: formatCurrency(successTxns.reduce((a,t)=>a+t.amount,0),true), color: '#fff' },
           { label:'Successful',         val: successTxns.length,         color: '#34d399' },
           { label:'Failed',             val: MOCK_TRANSACTIONS.filter(t=>t.status==='failed').length, color: '#f87171' },
         ].map(s => (
-          <div key={s.label} className="rounded-xl p-6 lg:p-7" style={{ background: '#0f2442', border: '1px solid rgba(27,154,245,0.08)' }}>
-            <p className="text-xs font-semibold" style={{ color: '#7a94ab' }}>{s.label}</p>
-            <p className="text-2xl font-black mt-1.5" style={{ color: s.color }}>{s.val}</p>
+          <div key={s.label}
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              padding: '1.5rem',
+              borderRadius: '16px',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+            }}>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400" style={{ fontSize: '0.7rem' }}>{s.label}</p>
+            <p className="text-2xl font-black mt-2" style={{ color: s.color }}>{s.val}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-3 pt-2">
+      {/* Filter row */}
+      <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ marginBottom: '2rem' }}>
         {['All','BUY','SIP','REDEEM'].map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className="px-4.5 py-2 rounded-full text-xs font-bold border transition-all"
+            className="flex-shrink-0 rounded-full transition-all border"
             style={filter === f
-              ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', borderColor: 'transparent' }
-              : { background: 'rgba(27,154,245,0.06)', color: '#b0c4d8', borderColor: 'rgba(27,154,245,0.15)' }}>
+              ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', borderColor: 'transparent', boxShadow: '0 4px 12px rgba(18,180,195,0.25)', fontSize: '0.825rem', fontWeight: 700, padding: '0.55rem 1.25rem' }
+              : { background: 'rgba(255,255,255,0.03)', color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.06)', fontSize: '0.825rem', fontWeight: 600, padding: '0.55rem 1.25rem' }}>
             {f}
           </button>
         ))}
       </div>
 
-      <div className="rounded-2xl p-8 lg:p-10" style={CARD}>
+      {/* Data Table Card Wrapper */}
+      <div className="rounded-2xl" style={CARD}>
         <DataTable columns={columns} data={filtered} searchable searchPlaceholder="Search transactions..." pageSize={8} />
       </div>
     </div>
