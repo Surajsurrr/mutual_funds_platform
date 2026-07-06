@@ -8,12 +8,16 @@ export const Input = forwardRef(({
   rightElement,
   className = '',
   containerClassName = '',
+  variant = 'light',
   ...props
 }, ref) => {
   return (
     <div className={`flex flex-col gap-1.5 ${containerClassName}`}>
       {label && (
-        <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1B2745' }}>
+        <label 
+          className={`text-sm font-semibold ${props.labelClassName || ''}`}
+          style={{ color: variant === 'dark' ? '#d9e4ef' : '#1B2745', ...props.labelStyle }}
+        >
           {label}
           {props.required && <span style={{ color: '#ef4444', marginLeft: '4px' }}>*</span>}
         </label>
@@ -27,7 +31,7 @@ export const Input = forwardRef(({
         <input
           ref={ref}
           className={`
-            input-field
+            ${variant === 'dark' ? 'input-field-dark' : 'input-field'}
             ${Icon ? 'pl-10' : ''}
             ${rightElement ? 'pr-12' : ''}
             ${error ? 'border-rose-500/50 focus:border-rose-500' : ''}

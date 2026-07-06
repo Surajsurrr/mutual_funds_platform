@@ -28,7 +28,7 @@ export default function ClientDashboard() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>BE INVEST</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#42b4ff' }}>BE INVESTED</p>
           <h1 className="text-2xl font-black text-white">Good evening, {user?.name?.split(' ')[0]} 👋</h1>
           <div className="section-divider mt-2" />
         </div>

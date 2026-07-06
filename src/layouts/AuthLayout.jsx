@@ -1,18 +1,18 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { TrendingUp, Search, Phone, Menu, X, ChevronDown, Facebook, Twitter, Linkedin, Instagram, Mail, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/* â”€â”€â”€ Nav links config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* --- Nav links config ----------------------------------------------- */
 const NAV_LINKS = [
   { label: 'Home',     href: '/' },
   { label: 'About Us', href: '#about' },
-  { label: 'Service',  href: '#services', hasDropdown: true },
+  { label: 'Services',  href: '#services', hasDropdown: true },
   { label: 'Blog',     href: '#blog' },
   { label: 'Contact',  href: '#contact' },
 ];
 
-/* â”€â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* --- Header --------------------------------------------------------- */
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -105,7 +105,7 @@ const Header = () => {
               style={{ overflow: 'hidden', paddingBottom: '0.75rem' }}>
               <div style={{ position: 'relative' }}>
                 <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#7a94ab' }} />
-                <input placeholder="Search schemes, AMCs, fundsâ€¦"
+                <input placeholder="Search schemes, AMCs, funds..."
                   style={{
                     width: '100%', padding: '0.65rem 1rem 0.65rem 2.75rem',
                     background: '#202C44', border: '1.5px solid rgba(11,102,126,0.2)',
@@ -142,7 +142,7 @@ const Header = () => {
   );
 };
 
-/* â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* --- Footer --------------------------------------------------------- */
 const Footer = () => (
   <footer style={{ background: '#1B2745', borderTop: '1px solid rgba(11,102,126,0.12)', marginTop: 'auto' }}>
     {/* Partner logos strip */}
@@ -206,7 +206,7 @@ const Footer = () => (
             <a key={item} href="#" style={{ display: 'block', fontSize: '0.82rem', color: '#7a94ab', textDecoration: 'none', marginBottom: '0.6rem', transition: 'color 0.2s' }}
               onMouseEnter={e => e.currentTarget.style.color='#12B4C3'}
               onMouseLeave={e => e.currentTarget.style.color='#7a94ab'}>
-              â€º {item}
+              › {item}
             </a>
           ))}
         </div>
@@ -218,7 +218,7 @@ const Footer = () => (
             <a key={item} href="#" style={{ display: 'block', fontSize: '0.82rem', color: '#7a94ab', textDecoration: 'none', marginBottom: '0.6rem', transition: 'color 0.2s' }}
               onMouseEnter={e => e.currentTarget.style.color='#12B4C3'}
               onMouseLeave={e => e.currentTarget.style.color='#7a94ab'}>
-              â€º {item}
+              › {item}
             </a>
           ))}
         </div>
@@ -228,7 +228,7 @@ const Footer = () => (
           <h4 style={{ fontSize: '0.78rem', fontWeight: 700, color: '#12B4C3', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem' }}>Contact Us</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {[
-              { Icon: Phone,  text: '(808) 555-0111',    sub: 'Monâ€“Sat, 9AMâ€“6PM' },
+              { Icon: Phone,  text: '(808) 555-0111',    sub: 'Mon-Sat, 9AM-6PM' },
               { Icon: Mail,   text: 'support@fundflow.in', sub: 'We reply in 24hrs' },
               { Icon: MapPin, text: 'Mumbai, Maharashtra', sub: 'India 400 001' },
             ].map(({ Icon, text, sub }) => (
@@ -251,7 +251,7 @@ const Footer = () => (
     <div style={{ borderTop: '1px solid rgba(11,102,126,0.08)', padding: '1rem 1.5rem' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
         <p style={{ fontSize: '0.75rem', color: '#7a94ab' }}>
-          Â© 2025 FundFlow. All rights reserved. | SEBI Registered Investment Platform
+          © 2025 FundFlow. All rights reserved. | SEBI Registered Investment Platform
         </p>
         <div style={{ display: 'flex', gap: '1.25rem' }}>
           {['Privacy Policy', 'Terms of Use', 'Disclaimer'].map(item => (
@@ -263,7 +263,7 @@ const Footer = () => (
           ))}
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          {['ðŸ›¡ SEBI Registered', 'ðŸ”’ 256-bit SSL', 'â­ 4.9 Rating'].map(badge => (
+          {['🛡️ SEBI Registered', '🔒 256-bit SSL', '⭐ 4.9 Rating'].map(badge => (
             <span key={badge} style={{
               fontSize: '0.68rem', color: '#b0c4d8', fontWeight: 600,
               background: 'rgba(11,102,126,0.08)', border: '1px solid rgba(11,102,126,0.15)',
@@ -276,18 +276,38 @@ const Footer = () => (
   </footer>
 );
 
-/* â”€â”€â”€ AuthLayout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* --- AuthLayout ----------------------------------------------------- */
 export const AuthLayout = () => {
+  const [wordIndex, setWordIndex] = useState(0);
+  const words = ['The Rewards', 'Your Wealth', 'Your Future', 'Your Dreams'];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setWordIndex(prev => (prev + 1) % words.length);
+    }, 2500);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#1B2745' }}>
 
-      {/* â”€â”€ HEADER â”€â”€ */}
+      {/* -- HEADER -- */}
       <Header />
 
-      {/* â”€â”€ BODY â€” single column, full-width dark hero â”€â”€ */}
       <main style={{ flex: 1, position: 'relative', overflow: 'hidden',
         background: 'linear-gradient(160deg, #1B2745 0%, #1a2e50 50%, #0e2a4a 100%)',
       }}>
+
+        {/* Background stock chart image */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: 'url(/chart-bg.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.18,
+          mixBlendMode: 'overlay',
+          pointerEvents: 'none',
+        }} />
 
         {/* Background grid */}
         <div style={{
@@ -301,30 +321,46 @@ export const AuthLayout = () => {
         <div style={{ position: 'absolute', bottom: '5rem', left: '-3rem', width: '220px', height: '220px', borderRadius: '50%', border: '1.5px solid rgba(11,102,126,0.1)',   pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', top: '20%', right: '15%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(11,102,126,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        {/* â”€â”€â”€ Content container â”€â”€â”€ */}
+        {/* --- Content container --- */}
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '860px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
 
-          {/* 1 â€” Eyebrow */}
+          {/* 1 - Eyebrow */}
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#12B4C3', marginBottom: '1rem', textAlign: 'center' }}>
-            BE INVEST
+            BE INVESTED
           </motion.p>
 
-          {/* 2 â€” Heading */}
+          {/* 2 - Heading */}
           <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
-            style={{ fontSize: 'clamp(2.2rem, 5vw, 3.75rem)', fontWeight: 900, color: '#fff', lineHeight: 1.12,
-              marginBottom: '1.25rem', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
-            Invest With Confidence<br />
-            <span style={{ color: '#12B4C3' }}>Harvest</span> The Rewards
+            style={{ fontSize: 'clamp(2.2rem, 5vw, 3.75rem)', fontWeight: 900, color: '#fff', lineHeight: 1.15,
+              marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Poppins, sans-serif' }}>
+            <span>Invest With Confidence</span>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', width: '100%', flexWrap: 'wrap' }}>
+              <span>Harvest</span>
+              <span style={{ position: 'relative', display: 'inline-block', width: '300px', height: '1.2em', textAlign: 'left', overflow: 'hidden' }}>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={wordIndex}
+                    initial={{ y: 25, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -25, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                    style={{ position: 'absolute', left: 0, top: 0, width: '100%', color: '#12B4C3' }}
+                  >
+                    {words[wordIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+            </div>
           </motion.h1>
 
-          {/* 3 â€” Subtext */}
+          {/* 3 - Subtext */}
           <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             style={{ fontSize: '1rem', color: '#b0c4d8', lineHeight: 1.75, maxWidth: '520px', margin: '0 auto 2.25rem', textAlign: 'center' }}>
             Access 3,000+ mutual fund schemes from 42 AMCs. Real-time NAV tracking, portfolio analytics, and SIP management.
           </motion.p>
 
-          {/* 4 â€” CTA row */}
+          {/* 4 - CTA row */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
             <div style={{
@@ -337,7 +373,7 @@ export const AuthLayout = () => {
             }}
               onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 32px rgba(11,102,126,0.55)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 0 24px rgba(11,102,126,0.4)'; }}>
-              <span>Get Started</span><span>â†’</span>
+              <span>Get Started</span><span> →</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(11,102,126,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -350,12 +386,12 @@ export const AuthLayout = () => {
             </div>
           </motion.div>
 
-          {/* 5 â€” Stats row */}
+          {/* 5 - Stats row */}
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
             style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.875rem', marginBottom: '2rem' }}>
             {[
               { label: 'Active Investors', value: '3L+' },
-              { label: 'Total AUM',        value: 'â‚¹2.14L Cr' },
+              { label: 'Total AUM',        value: '₹2.14L Cr' },
               { label: 'Fund Schemes',     value: '3,000+' },
               { label: 'AMC Partners',     value: '42' },
             ].map(stat => (
@@ -369,10 +405,10 @@ export const AuthLayout = () => {
             ))}
           </motion.div>
 
-          {/* 6 â€” Trust badges */}
+          {/* 6 - Trust badges */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.42 }}
             style={{ display: 'flex', justifyContent: 'center', gap: '0.625rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
-            {['ðŸ›¡ SEBI Registered', 'ðŸ”’ 256-bit SSL', 'â­ 4.9 App Rating'].map(badge => (
+            {['🛡️ SEBI Registered', '🔒 256-bit SSL', '⭐ 4.9 App Rating'].map(badge => (
               <div key={badge} style={{
                 padding: '0.35rem 0.875rem', borderRadius: '20px',
                 background: 'rgba(11,102,126,0.1)', border: '1px solid rgba(11,102,126,0.22)',
@@ -382,16 +418,27 @@ export const AuthLayout = () => {
             ))}
           </motion.div>
 
-          {/* 7 â€” Sign In card */}
+          {/* 7 - Sign In card */}
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.45 }}
-            style={{ width: '100%', maxWidth: '480px', margin: '0 auto' }}>
+            style={{
+              width: '100%',
+              maxWidth: '500px',
+              margin: '0 auto',
+              background: 'rgba(27, 43, 73, 0.45)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '24px',
+              padding: '2.5rem 2rem',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+            }}>
             <Outlet />
           </motion.div>
 
         </div>
       </main>
 
-      {/* â”€â”€ FOOTER â”€â”€ */}
+      {/* -- FOOTER -- */}
       <Footer />
 
       {/* Responsive CSS */}

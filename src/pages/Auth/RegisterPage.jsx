@@ -42,8 +42,8 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-black text-white">Create account</h1>
-        <p className="text-sm mt-1" style={{ color: '#7a94ab' }}>Start your investment journey today</p>
+        <h1 className="text-3xl font-black text-white" style={{ color: '#ffffff' }}>Create account</h1>
+        <p className="text-sm mt-1" style={{ color: '#b0c4d8' }}>Start your investment journey today</p>
       </div>
 
       {/* Stepper */}
@@ -75,16 +75,16 @@ export default function RegisterPage() {
           onSubmit={handleSubmit(onNext)} className="space-y-4">
           {step === 0 && (
             <>
-              <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} required {...register('email')} />
-              <Input label="Password" type="password" icon={Lock} placeholder="Min 8 characters" error={errors.password?.message} required {...register('password')} />
-              <Input label="Confirm Password" type="password" icon={Lock} placeholder="Repeat password" error={errors.confirmPassword?.message} required {...register('confirmPassword')} />
+              <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} required variant="dark" {...register('email')} />
+              <Input label="Password" type="password" icon={Lock} placeholder="Min 8 characters" error={errors.password?.message} required variant="dark" {...register('password')} />
+              <Input label="Confirm Password" type="password" icon={Lock} placeholder="Repeat password" error={errors.confirmPassword?.message} required variant="dark" {...register('confirmPassword')} />
             </>
           )}
           {step === 1 && (
             <>
-              <Input label="Full Name" icon={User} placeholder="As per PAN card" error={errors.name?.message} required {...register('name')} />
-              <Input label="Mobile Number" type="tel" icon={Phone} placeholder="10-digit number" error={errors.phone?.message} required hint="Indian mobile numbers only" {...register('phone')} />
-              <Input label="Date of Birth" type="date" error={errors.dob?.message} required hint="Must be 18+ to invest" {...register('dob')} />
+              <Input label="Full Name" icon={User} placeholder="As per PAN card" error={errors.name?.message} required variant="dark" {...register('name')} />
+              <Input label="Mobile Number" type="tel" icon={Phone} placeholder="10-digit number" error={errors.phone?.message} required hint="Indian mobile numbers only" variant="dark" {...register('phone')} />
+              <Input label="Date of Birth" type="date" error={errors.dob?.message} required hint="Must be 18+ to invest" variant="dark" {...register('dob')} />
             </>
           )}
           {step === 2 && (
@@ -92,10 +92,10 @@ export default function RegisterPage() {
               <div className="p-3 rounded-xl" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}>
                 <p className="text-xs font-medium" style={{ color: '#fbbf24' }}>⚠️ KYC required per SEBI guidelines</p>
               </div>
-              <Input label="PAN Number" icon={CreditCard} placeholder="ABCDE1234F" error={errors.pan?.message} required className="uppercase" {...register('pan')} />
-              <Input label="Aadhaar Number" placeholder="12-digit Aadhaar" error={errors.aadhaar?.message} required hint="Masked for security" {...register('aadhaar')} />
-              <Input label="Bank Account Number" placeholder="Savings/Current" error={errors.bankAccount?.message} required {...register('bankAccount')} />
-              <Input label="IFSC Code" placeholder="e.g. HDFC0001234" error={errors.ifsc?.message} required className="uppercase" {...register('ifsc')} />
+              <Input label="PAN Number" icon={CreditCard} placeholder="ABCDE1234F" error={errors.pan?.message} required className="uppercase" variant="dark" {...register('pan')} />
+              <Input label="Aadhaar Number" placeholder="12-digit Aadhaar" error={errors.aadhaar?.message} required hint="Masked for security" variant="dark" {...register('aadhaar')} />
+              <Input label="Bank Account Number" placeholder="Savings/Current" error={errors.bankAccount?.message} required variant="dark" {...register('bankAccount')} />
+              <Input label="IFSC Code" placeholder="e.g. HDFC0001234" error={errors.ifsc?.message} required className="uppercase" variant="dark" {...register('ifsc')} />
             </>
           )}
 
@@ -112,7 +112,7 @@ export default function RegisterPage() {
         </motion.form>
       </AnimatePresence>
 
-      <p className="text-center text-sm" style={{ color: '#7a94ab' }}>
+      <p className="text-center text-sm" style={{ color: '#b0c4d8' }}>
         Already have an account?{' '}
         <Link to="/login" className="font-bold" style={{ color: '#42b4ff' }}>Sign in</Link>
       </p>

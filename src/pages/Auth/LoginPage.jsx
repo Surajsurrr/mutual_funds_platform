@@ -60,8 +60,8 @@ export default function LoginPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-black text-white">Welcome back</h1>
-        <p className="text-sm mt-1" style={{ color: '#7a94ab' }}>Sign in to your FundFlow account</p>
+        <h1 className="text-3xl font-black text-white" style={{ color: '#ffffff' }}>Welcome back</h1>
+        <p className="text-sm mt-1" style={{ color: '#b0c4d8' }}>Sign in to your FundFlow account</p>
       </div>
 
       {/* Demo Quick-fill */}
@@ -76,7 +76,7 @@ export default function LoginPage() {
               onMouseEnter={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.4)'}
               onMouseLeave={e => e.currentTarget.style.borderColor='rgba(27,154,245,0.12)'}>
               <p className="text-xs font-bold text-white">{acc.emoji} {acc.label}</p>
-              <p className="text-xs truncate mt-0.5" style={{ color: '#7a94ab' }}>{acc.email}</p>
+              <p className="text-xs truncate mt-0.5" style={{ color: '#b0c4d8' }}>{acc.email}</p>
             </button>
           ))}
         </div>
@@ -102,10 +102,11 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} {...register('email')} />
+        <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} variant="dark" {...register('email')} />
 
         <Input label="Password" type={showPassword ? 'text' : 'password'} icon={Lock} placeholder="••••••••"
           error={errors.password?.message}
+          variant="dark"
           rightElement={
             <button type="button" onClick={() => setShowPassword(p => !p)} style={{ color: '#7a94ab' }}>
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -122,7 +123,7 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <p className="text-center text-sm" style={{ color: '#7a94ab' }}>
+      <p className="text-center text-sm" style={{ color: '#b0c4d8' }}>
         New to FundFlow?{' '}
         <Link to="/register" className="font-bold" style={{ color: '#42b4ff' }}>Create account</Link>
       </p>
