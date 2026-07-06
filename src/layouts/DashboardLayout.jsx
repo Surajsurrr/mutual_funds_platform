@@ -11,7 +11,7 @@ export const DashboardLayout = () => {
     <div className="min-h-screen overflow-x-hidden" style={{ background: '#0B1329' }}>
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
-      <div className="flex pt-[110px] gap-8 lg:gap-10">
+      <div className="flex gap-8 lg:gap-10" style={{ paddingTop: '116px' }}>
         {/* Desktop Sidebar Spacer */}
         <div className="hidden lg:block w-80 flex-shrink-0" />
 

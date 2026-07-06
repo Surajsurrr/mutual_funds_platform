@@ -26,11 +26,12 @@ export default function ClientDashboard() {
     <div className="space-y-8 pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-start justify-between flex-wrap gap-4">
+        className="flex items-start justify-between flex-wrap gap-4"
+        style={{ marginBottom: '2.25rem' }}>
         <div>
           <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>BE INVESTED</p>
           <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Good evening, {user?.name?.split(' ')[0]} 👋</h1>
-          <div className="section-divider mt-2" />
+          <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
         </div>
         <Link to="/client/amc">
           <Button variant="primary" icon={Building2} id="explore-funds">Explore Funds</Button>
@@ -39,7 +40,8 @@ export default function ClientDashboard() {
 
       {/* Portfolio Hero */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="rounded-2xl p-8 lg:p-10 relative overflow-hidden" style={CARD}>
+        className="rounded-2xl p-8 lg:p-10 relative overflow-hidden"
+        style={{ ...CARD, marginBottom: '2.25rem' }}>
         {/* Blue top accent */}
         <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
         {/* Glow orb */}
@@ -92,7 +94,7 @@ export default function ClientDashboard() {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
         <StatsCard title="Invested"   value={formatCurrency(totalInvested, true)} icon={Wallet}    accentColor="blue"    delay={0.15} />
         <StatsCard title="Total Gain" value={formatCurrency(totalGain, true)}     icon={TrendingUp} accentColor="emerald" trend={totalGainPct} trendLabel="overall" delay={0.2} />
         <StatsCard title="Holdings"   value={holdings.length} subtitle="Active schemes" icon={PieChart}  accentColor="blue"  delay={0.25} />

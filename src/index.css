@@ -378,3 +378,28 @@ html { scroll-behavior: smooth; }
   background: rgba(27,154,245,0.04) !important;
 }
 
+/* ══════════════════ RESPONSIVE SIDEBAR ══════════════════ */
+.app-sidebar-fixed {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  z-index: 30 !important;
+  width: 20rem !important; /* w-80 */
+  display: flex !important;
+  flex-direction: column !important;
+  padding-top: 92px !important; /* starts below header on mobile */
+  background: #202C44 !important;
+  border-right: 1px solid rgba(255,255,255,0.06) !important;
+  transition: transform 0.3s ease !important;
+}
+
+@media (min-width: 1024px) {
+  .app-sidebar-fixed {
+    top: 92px !important;
+    padding-top: 0 !important;
+    transform: none !important;
+    height: calc(100vh - 92px) !important;
+  }
+}
+

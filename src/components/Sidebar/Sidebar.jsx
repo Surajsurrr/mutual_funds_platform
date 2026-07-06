@@ -58,13 +58,11 @@ export const Sidebar = ({ isOpen, onClose }) => {
             onClick={onClose} />
         )}
       </AnimatePresence>
-
       <motion.aside
         initial={false}
         animate={typeof window !== 'undefined' && window.innerWidth < 1024 ? { x: isOpen ? 0 : '-100%' } : { x: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed left-0 top-0 bottom-0 z-30 w-80 flex flex-col pt-[90px] lg:top-[110px] lg:pt-0 lg:translate-x-0"
-        style={{ background: '#202C44', borderRight: '1px solid rgba(255,255,255,0.06)' }}
+        className="app-sidebar-fixed"
       >
         {/* Role header */}
         <div style={{ padding: '1.75rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
