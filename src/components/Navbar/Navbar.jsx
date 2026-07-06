@@ -65,8 +65,12 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
           {/* Right */}
           <div className="flex items-center gap-2">
             {/* Phone CTA pill */}
-            <div className="hidden lg:flex items-center gap-2.5 rounded-full px-4 py-2 mr-2"
-              style={{ background: 'linear-gradient(135deg,#0B667E,#12B4C3)', boxShadow: '0 4px 14px rgba(11,102,126,0.3)' }}>
+            <div className="hidden lg:flex items-center gap-2.5 rounded-full mr-2"
+              style={{
+                background: 'linear-gradient(135deg,#0B667E,#12B4C3)',
+                boxShadow: '0 4px 14px rgba(11,102,126,0.3)',
+                padding: '0.5rem 1.25rem'
+              }}>
               <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20">
                 <Phone size={13} className="text-white" />
               </div>
@@ -123,19 +127,19 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
             <div className="relative">
               <button id="nav-profile"
                 onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); }}
-                className="flex items-center gap-2 p-1.5 pr-3 rounded-xl transition-colors"
-                style={{ color: '#ffffff' }}
+                className="flex items-center gap-2 rounded-xl transition-colors"
+                style={{ color: '#ffffff', padding: '0.45rem 1rem 0.45rem 0.625rem' }}
                 onMouseEnter={e => e.currentTarget.style.background='rgba(18,180,195,0.1)'}
                 onMouseLeave={e => e.currentTarget.style.background='transparent'}>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-                  style={{ background: 'linear-gradient(135deg,#0B667E,#12B4C3)' }}>
+                  style={{ background: 'linear-gradient(135deg,#0B667E,#12B4C3)', flexShrink: 0 }}>
                   {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div className="hidden sm:block text-left">
                   <p className="text-xs font-bold leading-none" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>{user?.name || 'User'}</p>
-                  <p className="text-xs leading-none mt-0.5" style={{ color: '#a0aec0' }}>{roleLabel}</p>
+                  <p className="text-xs leading-none mt-1" style={{ color: '#a0aec0' }}>{roleLabel}</p>
                 </div>
-                <ChevronDown size={14} style={{ color: '#a0aec0' }}
+                <ChevronDown size={14} style={{ color: '#a0aec0', flexShrink: 0 }}
                   className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -145,17 +149,17 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                     exit={{ opacity: 0, y: 8, scale: 0.95 }} transition={{ duration: 0.15 }}
                     className="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden"
                     style={{ background: '#202C44', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
-                    <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '1rem 1.25rem' }}>
                       <p className="font-semibold text-sm" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>{user?.name}</p>
-                      <p className="text-xs mt-0.5" style={{ color: '#a0aec0' }}>{user?.email}</p>
+                      <p className="text-xs mt-1" style={{ color: '#a0aec0' }}>{user?.email}</p>
                     </div>
                     {[
                       { icon: User,     label: 'Profile' },
                       { icon: Settings, label: 'Settings' },
                     ].map(item => (
                       <button key={item.label}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-sm transition-colors"
-                        style={{ color: '#cbd5e1' }}
+                        className="flex items-center gap-3 w-full text-sm transition-colors"
+                        style={{ color: '#cbd5e1', padding: '0.75rem 1.25rem' }}
                         onMouseEnter={e => { e.currentTarget.style.background='rgba(18,180,195,0.06)'; e.currentTarget.style.color='#12B4C3'; }}
                         onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#cbd5e1'; }}
                         onClick={() => setProfileOpen(false)}>
@@ -165,11 +169,12 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                     ))}
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                       <button id="nav-logout" onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-sm transition-colors"
-                        style={{ color: '#ef4444' }}
+                        className="flex items-center gap-3 w-full text-sm transition-colors"
+                        style={{ color: '#ef4444', padding: '0.75rem 1.25rem' }}
                         onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
                         onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-                        <LogOut size={15} /> Sign Out
+                        <LogOut size={15} />
+                        Sign Out
                       </button>
                     </div>
                   </motion.div>

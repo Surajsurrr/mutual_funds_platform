@@ -43,7 +43,7 @@ export default function TransactionHistoryPage() {
           <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Transactions</h1>
           <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
         </div>
-        <Button variant="secondary" icon={Download} size="sm" id="export-txn">Export CSV</Button>
+        <Button variant="secondary" icon={Download} size="md" id="export-txn">Export CSV</Button>
       </motion.div>
 
       {/* Stats row */}

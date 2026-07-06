@@ -15,10 +15,10 @@ const variants = {
 };
 
 const SIZE_STYLES = {
-  sm: { padding: '0.45rem 1rem', fontSize: '0.75rem' },
-  md: { padding: '0.625rem 1.45rem', fontSize: '0.85rem' },
-  lg: { padding: '0.875rem 1.85rem', fontSize: '0.95rem' },
-  xl: { padding: '1.125rem 2.25rem', fontSize: '1.125rem' },
+  sm: { padding: '0.55rem 1.25rem', fontSize: '0.75rem' },
+  md: { padding: '0.75rem 1.65rem', fontSize: '0.85rem' },
+  lg: { padding: '0.95rem 2.1rem', fontSize: '0.95rem' },
+  xl: { padding: '1.2rem 2.5rem', fontSize: '1.125rem' },
 };
 
 const getStyle = (variant) => {
