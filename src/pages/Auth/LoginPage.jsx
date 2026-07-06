@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, TrendingUp, Landmark, Building2, Settings } from 'lucide-react';
 import { Button } from '../../components/UI/Button';
 import { Input } from '../../components/UI/Input';
 import { useAuthStore } from '../../store/authStore';
@@ -17,10 +17,10 @@ const schema = z.object({
 });
 
 const DEMO_ACCOUNTS = [
-  { role: 'client', email: 'client@fundflow.in', password: 'demo123', label: 'Investor',      emoji: '📈' },
-  { role: 'cb',     email: 'cb@fundflow.in',     password: 'demo123', label: 'Corp. Banking', emoji: '🏦' },
-  { role: 'amc',    email: 'amc@fundflow.in',    password: 'demo123', label: 'AMC Manager',   emoji: '🏢' },
-  { role: 'admin',  email: 'admin@fundflow.in',  password: 'demo123', label: 'Administrator', emoji: '⚙️' },
+  { role: 'client', email: 'client@fundflow.in', password: 'demo123', label: 'Investor',      icon: TrendingUp },
+  { role: 'cb',     email: 'cb@fundflow.in',     password: 'demo123', label: 'Corp. Banking', icon: Landmark },
+  { role: 'amc',    email: 'amc@fundflow.in',    password: 'demo123', label: 'AMC Manager',   icon: Building2 },
+  { role: 'admin',  email: 'admin@fundflow.in',  password: 'demo123', label: 'Administrator', icon: Settings },
 ];
 
 const ROLE_REDIRECT = { client: '/client/dashboard', cb: '/cb/dashboard', amc: '/amc/dashboard', admin: '/admin/dashboard' };
@@ -51,10 +51,10 @@ export default function LoginPage() {
   };
 
   const ROLE_OPTS = [
-    { value: 'client', label: 'Investor',      emoji: '📈' },
-    { value: 'cb',     label: 'Corp. Banking', emoji: '🏦' },
-    { value: 'amc',    label: 'AMC',           emoji: '🏢' },
-    { value: 'admin',  label: 'Admin',         emoji: '⚙️' },
+    { value: 'client', label: 'Investor',      icon: TrendingUp },
+    { value: 'cb',     label: 'Corp. Banking', icon: Landmark },
+    { value: 'amc',    label: 'AMC',           icon: Building2 },
+    { value: 'admin',  label: 'Admin',         icon: Settings },
   ];
 
   return (
@@ -71,45 +71,47 @@ export default function LoginPage() {
 
         {/* Demo Quick-fill Stack */}
         <div className="space-y-3.5">
-          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#12B4C3' }}>⚡ Demo Accounts</p>
+          <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#12B4C3' }}>Demo Accounts</p>
           <div className="space-y-2.5">
-            {DEMO_ACCOUNTS.map(acc => (
-              <button key={acc.role}
-                type="button"
-                onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo: ${acc.label}`, { icon: '🔑' }); }}
-                className="w-full text-left rounded-xl transition-all flex items-center gap-4.5"
-                style={{
-                  padding: '1.1rem 1.4rem',
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1.5px solid rgba(18,180,195,0.1)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor='rgba(18,180,195,0.4)';
-                  e.currentTarget.style.background='rgba(18,180,195,0.04)';
-                  e.currentTarget.style.boxShadow='0 4px 16px rgba(18,180,195,0.2)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor='rgba(18,180,195,0.1)';
-                  e.currentTarget.style.background='rgba(255,255,255,0.02)';
-                  e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';
-                }}>
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '10px',
-                  background: 'rgba(18,180,195,0.1)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid rgba(18,180,195,0.2)',
-                  fontSize: '1.25rem',
-                  flexShrink: 0,
-                }}>
-                  {acc.emoji}
-                </div>
-                <div>
-                  <p style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#12B4C3' }}>{acc.label}</p>
-                  <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{acc.email}</p>
-                </div>
-              </button>
-            ))}
+            {DEMO_ACCOUNTS.map(acc => {
+              const AccIcon = acc.icon;
+              return (
+                <button key={acc.role}
+                  type="button"
+                  onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo: ${acc.label}`, { icon: '🔑' }); }}
+                  className="w-full text-left rounded-xl transition-all flex items-center gap-4.5"
+                  style={{
+                    padding: '1.1rem 1.4rem',
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1.5px solid rgba(18,180,195,0.1)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor='rgba(18,180,195,0.4)';
+                    e.currentTarget.style.background='rgba(18,180,195,0.04)';
+                    e.currentTarget.style.boxShadow='0 4px 16px rgba(18,180,195,0.2)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor='rgba(18,180,195,0.1)';
+                    e.currentTarget.style.background='rgba(255,255,255,0.02)';
+                    e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';
+                  }}>
+                  <div style={{
+                    width: '44px', height: '44px', borderRadius: '10px',
+                    background: 'rgba(18,180,195,0.1)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '1px solid rgba(18,180,195,0.2)',
+                    flexShrink: 0,
+                  }}>
+                    <AccIcon size={18} style={{ color: '#12B4C3' }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#12B4C3' }}>{acc.label}</p>
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{acc.email}</p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -121,19 +123,22 @@ export default function LoginPage() {
           <div className="space-y-1.5">
             <label className="text-sm font-semibold text-white">Sign in as</label>
             <div className="grid grid-cols-2 gap-2">
-              {ROLE_OPTS.map(r => (
-                <label key={r.value}
-                  className="flex items-center gap-3 rounded-xl cursor-pointer transition-all"
-                  style={{
-                    padding: '1.1rem 1.4rem',
-                    border: `1px solid ${selectedRole === r.value ? '#12B4C3' : 'rgba(255,255,255,0.08)'}`,
-                    background: selectedRole === r.value ? 'rgba(18,180,195,0.12)' : 'rgba(255,255,255,0.02)',
-                  }}>
-                  <input type="radio" value={r.value} {...register('role')} className="sr-only" />
-                  <span>{r.emoji}</span>
-                  <span className="text-sm font-medium" style={{ color: selectedRole === r.value ? '#12B4C3' : '#b0c4d8' }}>{r.label}</span>
-                </label>
-              ))}
+              {ROLE_OPTS.map(r => {
+                const OptIcon = r.icon;
+                return (
+                  <label key={r.value}
+                    className="flex items-center gap-3 rounded-xl cursor-pointer transition-all"
+                    style={{
+                      padding: '1.1rem 1.4rem',
+                      border: `1px solid ${selectedRole === r.value ? '#12B4C3' : 'rgba(255,255,255,0.08)'}`,
+                      background: selectedRole === r.value ? 'rgba(18,180,195,0.12)' : 'rgba(255,255,255,0.02)',
+                    }}>
+                    <input type="radio" value={r.value} {...register('role')} className="sr-only" />
+                    <OptIcon size={16} style={{ color: selectedRole === r.value ? '#12B4C3' : '#7a94ab' }} />
+                    <span className="text-sm font-medium" style={{ color: selectedRole === r.value ? '#12B4C3' : '#b0c4d8' }}>{r.label}</span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
