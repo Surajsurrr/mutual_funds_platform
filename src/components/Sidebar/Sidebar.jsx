@@ -42,6 +42,13 @@ const ROLE_META = {
   admin:  { label: 'Admin Console',     icon: Shield,     color: '#f87171' },
 };
 
+const SECTION_LABELS = {
+  client: 'Portfolio Manager',
+  cb:     'Corporate Banking',
+  amc:    'AMC Operations',
+  admin:  'Admin Console',
+};
+
 export const Sidebar = ({ isOpen, onClose }) => {
   const { user } = useAuthStore();
   const role     = user?.role || 'client';
@@ -58,6 +65,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
             onClick={onClose} />
         )}
       </AnimatePresence>
+
       <motion.aside
         initial={false}
         animate={typeof window !== 'undefined' && window.innerWidth < 1024 ? { x: isOpen ? 0 : '-100%' } : { x: 0 }}
@@ -71,32 +79,37 @@ export const Sidebar = ({ isOpen, onClose }) => {
               width: '42px', height: '42px', borderRadius: '12px',
               background: 'rgba(18,180,195,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0
             }}>
               <meta.icon size={18} style={{ color: meta.color }} />
             </div>
             <div>
-              <p className="text-sm font-black" style={{ color: meta.color, fontFamily: 'Poppins, sans-serif' }}>{meta.label}</p>
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>ID: {user?.id || 'USR000'}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{meta.label}</p>
+                {role === 'client' && (
+                  <span className="text-[9px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-500/20 uppercase tracking-wider">
+                    KYC
+                  </span>
+                )}
+              </div>
+              <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>ID: {user?.id || 'USR001'}</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto px-5 py-8 space-y-3.5">
+        <nav className="flex-1 overflow-y-auto px-5 py-8 space-y-2">
+          <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3.5 mb-4">
+            {SECTION_LABELS[role] || 'Menu'}
+          </p>
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to}
               onClick={() => window.innerWidth < 1024 && onClose()}
-              className={({ isActive }) => `
-                flex items-center gap-3.5 px-5 py-3.5 rounded-xl text-sm font-semibold transition-all
-                ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}
-              `}
-              style={({ isActive }) => isActive
-                ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', boxShadow: '0 2px 12px rgba(18,180,195,0.3)' }
-                : {}}>
+              className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`}>
               {({ isActive }) => (
                 <>
-                  <item.icon size={18} style={{ color: isActive ? '#fff' : '#7a94ab' }} />
-                  {item.label}
+                  <item.icon size={18} style={{ color: isActive ? '#12B4C3' : '#7a94ab' }} />
+                  <span>{item.label}</span>
                 </>
               )}
             </NavLink>
@@ -105,14 +118,21 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Footer */}
         <div className="p-6 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="rounded-xl text-center"
+          <div className="rounded-xl text-center relative overflow-hidden"
             style={{
               padding: '1.25rem 1.4rem',
-              background: 'rgba(18,180,195,0.1)',
-              border: '1px solid rgba(18,180,195,0.2)',
+              background: 'rgba(18,180,195,0.04)',
+              border: '1px solid rgba(18,180,195,0.12)',
             }}>
             <p className="text-xs font-extrabold" style={{ color: '#12B4C3', fontFamily: 'Poppins, sans-serif' }}>FundFlow v1.0.0</p>
-            <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>SEBI Registered Platform</p>
+            
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <p className="text-[10px] font-semibold text-emerald-400/90 uppercase tracking-wider">Live Market Active</p>
+            </div>
           </div>
         </div>
       </motion.aside>
