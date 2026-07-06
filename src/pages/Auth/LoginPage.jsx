@@ -60,7 +60,7 @@ export default function LoginPage() {
   return (
     <div className="auth-card-grid">
       {/* Left Column: Heading & Demo Quick-fill */}
-      <div className="space-y-8 flex flex-col">
+      <div className="flex flex-col justify-center h-full" style={{ minHeight: '100%' }}>
         <div>
           <p style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#12B4C3', marginBottom: '0.5rem' }}>
             • SECURE GATEWAY
@@ -70,18 +70,18 @@ export default function LoginPage() {
         </div>
 
         {/* Demo Quick-fill Stack */}
-        <div className="space-y-3.5">
+        <div className="space-y-3" style={{ marginTop: '2rem' }}>
           <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#12B4C3' }}>Demo Accounts</p>
-          <div className="space-y-2.5">
+          <div className="grid grid-cols-2 gap-2.5">
             {DEMO_ACCOUNTS.map(acc => {
               const AccIcon = acc.icon;
               return (
                 <button key={acc.role}
                   type="button"
                   onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo Autofilled: ${acc.label}`); }}
-                  className="w-full text-left rounded-xl transition-all flex items-center gap-4.5"
+                  className="text-left rounded-xl transition-all flex items-center gap-3"
                   style={{
-                    padding: '1.1rem 1.4rem',
+                    padding: '0.8rem 1rem',
                     background: 'rgba(255,255,255,0.02)',
                     border: '1.5px solid rgba(18,180,195,0.1)',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
@@ -97,36 +97,37 @@ export default function LoginPage() {
                     e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';
                   }}>
                   <div style={{
-                    width: '44px', height: '44px', borderRadius: '10px',
+                    width: '36px', height: '36px', borderRadius: '8px',
                     background: 'rgba(18,180,195,0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: '1px solid rgba(18,180,195,0.2)',
                     flexShrink: 0,
                   }}>
-                    <AccIcon size={18} style={{ color: '#12B4C3' }} />
+                    <AccIcon size={16} style={{ color: '#12B4C3' }} />
                   </div>
                   <div>
                     <p style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#12B4C3' }}>{acc.label}</p>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{acc.email}</p>
+                    <p style={{ fontSize: '0.75rem', fontWeight: 600, color: '#ffffff', marginTop: '1px' }} className="truncate max-w-[120px]">{acc.email}</p>
                   </div>
                 </button>
               );
             })}
+          </div>
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-auto pt-6 flex flex-wrap items-center gap-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <ShieldCheck size={15} className="text-emerald-400" />
-            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>SEBI Registered</span>
+        <div className="flex flex-wrap items-center gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '2rem', paddingTop: '1.25rem' }}>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <ShieldCheck size={14} className="text-emerald-400" />
+            <span className="text-[11px] font-bold" style={{ color: '#b0c4d8' }}>SEBI Registered</span>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <LockKeyhole size={14} className="text-cyan-400" />
-            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>256-bit SSL</span>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <LockKeyhole size={13} className="text-cyan-400" />
+            <span className="text-[11px] font-bold" style={{ color: '#b0c4d8' }}>256-bit SSL</span>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Star size={14} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
-            <span className="text-xs font-bold" style={{ color: '#b0c4d8' }}>4.9 App Rating</span>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <Star size={13} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+            <span className="text-[11px] font-bold" style={{ color: '#b0c4d8' }}>4.9 App Rating</span>
           </div>
         </div>
       </div>
@@ -144,25 +145,24 @@ export default function LoginPage() {
                   <label key={r.value}
                     className="flex items-center gap-3 rounded-xl cursor-pointer transition-all"
                     style={{
-                      padding: '1.1rem 1.4rem',
+                      padding: '0.8rem 1rem',
                       border: `1px solid ${selectedRole === r.value ? '#12B4C3' : 'rgba(255,255,255,0.08)'}`,
                       background: selectedRole === r.value ? 'rgba(18,180,195,0.12)' : 'rgba(255,255,255,0.02)',
                     }}>
                     <input type="radio" value={r.value} {...register('role')} className="sr-only" />
-                    <OptIcon size={16} style={{ color: selectedRole === r.value ? '#12B4C3' : '#7a94ab' }} />
-                    <span className="text-sm font-medium" style={{ color: selectedRole === r.value ? '#12B4C3' : '#b0c4d8' }}>{r.label}</span>
+                    <OptIcon size={15} style={{ color: selectedRole === r.value ? '#12B4C3' : '#7a94ab' }} />
+                    <span className="text-xs font-semibold" style={{ color: selectedRole === r.value ? '#12B4C3' : '#b0c4d8' }}>{r.label}</span>
                   </label>
                 );
               })}
             </div>
           </div>
 
-          <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} variant="dark" style={{ padding: '1.1rem 1rem 1.1rem 2.75rem' }} {...register('email')} />
+          <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} variant="dark" {...register('email')} />
 
           <Input label="Password" type={showPassword ? 'text' : 'password'} icon={Lock} placeholder="••••••••"
             error={errors.password?.message}
             variant="dark"
-            style={{ padding: '1.1rem 1rem 1.1rem 2.75rem' }}
             rightElement={
               <button type="button" onClick={() => setShowPassword(p => !p)} style={{ color: '#7a94ab' }}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -176,7 +176,7 @@ export default function LoginPage() {
 
           <Button type="submit" variant="primary" size="lg" fullWidth loading={loading} id="login-submit"
             style={{
-              padding: '1.1rem 1.5rem',
+              padding: '0.8rem 1.5rem',
               background: 'linear-gradient(135deg,#0B667E,#12B4C3)',
               boxShadow: '0 0 16px rgba(18,180,195,0.3)',
             }}>
