@@ -41,7 +41,7 @@ export default function ClientDashboard() {
       {/* Portfolio Hero */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="rounded-2xl p-8 lg:p-10 relative overflow-hidden"
-        style={{ ...CARD, marginBottom: '2.25rem' }}>
+        style={{ ...CARD, padding: '2.25rem', marginBottom: '2.25rem' }}>
         {/* Blue top accent */}
         <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
         {/* Glow orb */}
@@ -103,7 +103,7 @@ export default function ClientDashboard() {
 
       <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
         {/* Holdings */}
-        <div className="lg:col-span-2 rounded-2xl p-8 lg:p-10" style={CARD}>
+        <div className="lg:col-span-2 rounded-2xl" style={{ ...CARD, padding: '2.25rem' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-white">My Holdings</h2>
             <Link to="/client/portfolio" className="text-xs font-semibold flex items-center gap-1" style={{ color: '#42b4ff' }}>
@@ -134,7 +134,7 @@ export default function ClientDashboard() {
         </div>
 
         {/* Recent Txns */}
-        <div className="rounded-2xl p-8 lg:p-10" style={CARD}>
+        <div className="rounded-2xl" style={{ ...CARD, padding: '2.25rem' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-white">Recent</h2>
             <Link to="/client/transactions" className="text-xs font-semibold flex items-center gap-1" style={{ color: '#42b4ff' }}>
