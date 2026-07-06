@@ -28,6 +28,8 @@ import CBDashboard from '../pages/CB/CBDashboard';
 
 // AMC Pages
 import AMCDashboard from '../pages/AMC/AMCDashboard';
+import AMCSchemesPage from '../pages/AMC/AMCSchemesPage';
+import AMCInvestorsPage from '../pages/AMC/AMCInvestorsPage';
 
 // Admin Pages
 import AdminDashboard from '../pages/Admin/AdminDashboard';
@@ -91,8 +93,8 @@ export const AppRoutes = () => {
         <Route element={<RoleRoute allowedRoles={['amc']} />}>
           <Route element={<DashboardLayout />}>
             <Route path="/amc/dashboard" element={<AMCDashboard />} />
-            <Route path="/amc/schemes" element={<AMCDashboard />} />
-            <Route path="/amc/investors" element={<AMCDashboard />} />
+            <Route path="/amc/schemes" element={<AMCSchemesPage />} />
+            <Route path="/amc/investors" element={<AMCInvestorsPage />} />
           </Route>
         </Route>
 
