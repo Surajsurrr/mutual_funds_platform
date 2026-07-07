@@ -1,11 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Building2, Users, TrendingUp, BarChart3, Plus, Edit, Trash2 } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
-import { MOCK_SCHEMES } from '../../utils/mockData';
+import { useAmcStats, useAmcSchemes } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
 import { getRiskColor } from '../../utils/formatters';
+import toast from 'react-hot-toast';
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -17,6 +20,21 @@ const CARD = {
 };
 
 export default function AMCDashboard() {
+  const navigate = useNavigate();
+  const { data: amcStats }   = useAmcStats();
+  const { data: amcSchemes, refetch } = useAmcSchemes();
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this scheme?')) return;
+    try {
+      await writeClient.delete(`/amc/schemes/${id}`);
+      toast.success('Scheme deleted.');
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete scheme');
+    }
+  };
+
   return (
     <div className="pb-8">
       {/* Header */}
@@ -29,15 +47,15 @@ export default function AMCDashboard() {
           <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
           <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Manage your schemes and investor data</p>
         </div>
-        <Button variant="primary" icon={Plus} id="add-scheme">Add New Scheme</Button>
+        <Button variant="primary" icon={Plus} id="add-scheme" onClick={() => navigate('/amc/schemes?add=true')}>Add New Scheme</Button>
       </motion.div>
 
       {/* Stats Cards Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
-        <StatsCard title="Total Schemes"    value="142"        icon={Building2}  accentColor="blue"    delay={0} />
-        <StatsCard title="Total Investors"  value="18,420"     icon={Users}      accentColor="emerald" trend={6.2} delay={0.1} />
-        <StatsCard title="Total AUM"        value="₹29,431 Cr" icon={TrendingUp} accentColor="amber"   trend={3.8} delay={0.15} />
-        <StatsCard title="Avg Returns (1Y)" value="18.4%"      icon={BarChart3}  accentColor="blue"    delay={0.2} />
+        <StatsCard title="Total Schemes"    value={amcStats?.totalSchemes   ?? '—'} icon={Building2}  accentColor="blue"    delay={0} />
+        <StatsCard title="Total Investors"  value={amcStats?.totalInvestors ?? '—'} icon={Users}      accentColor="emerald" trend={6.2} delay={0.1} />
+        <StatsCard title="Total AUM"        value={amcStats?.totalAUM       ?? '—'} icon={TrendingUp} accentColor="amber"   trend={3.8} delay={0.15} />
+        <StatsCard title="Avg Returns (1Y)" value={amcStats ? `${amcStats.avgReturns1Y}%` : '—'} icon={BarChart3}  accentColor="blue"    delay={0.2} />
       </div>
 
       {/* Your Schemes Table Card */}
@@ -57,7 +75,7 @@ export default function AMCDashboard() {
               </tr>
             </thead>
             <tbody>
-              {MOCK_SCHEMES.slice(0,6).map((s,i) => (
+              {(amcSchemes ?? []).slice(0,6).map((s,i) => (
                 <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i*0.07 }}>
                   <td className="font-semibold text-white text-sm">{s.name}</td>
                   <td>
@@ -75,12 +93,14 @@ export default function AMCDashboard() {
                   </td>
                   <td>
                     <div className="flex gap-2">
-                      <button className="p-1.5 rounded-lg transition-colors" style={{ color: '#12B4C3' }}
+                      <button onClick={() => navigate(`/amc/schemes?edit=${s.id}`)}
+                        className="p-1.5 rounded-lg transition-colors" style={{ color: '#12B4C3' }}
                         onMouseEnter={e => e.currentTarget.style.background='rgba(18,180,195,0.1)'}
                         onMouseLeave={e => e.currentTarget.style.background='transparent'}>
                         <Edit size={14} />
                       </button>
-                      <button className="p-1.5 rounded-lg transition-colors" style={{ color: '#f87171' }}
+                      <button onClick={() => handleDelete(s.id)}
+                        className="p-1.5 rounded-lg transition-colors" style={{ color: '#f87171' }}
                         onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.1)'}
                         onMouseLeave={e => e.currentTarget.style.background='transparent'}>
                         <Trash2 size={14} />

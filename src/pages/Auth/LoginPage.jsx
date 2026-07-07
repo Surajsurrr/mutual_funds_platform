@@ -7,7 +7,7 @@ import { Eye, EyeOff, Mail, Lock, TrendingUp, Landmark, Building2, Settings, Shi
 import { Button } from '../../components/UI/Button';
 import { Input } from '../../components/UI/Input';
 import { useAuthStore } from '../../store/authStore';
-import { MOCK_USER } from '../../utils/mockData';
+import { writeClient } from '../../api/axiosClients';
 import toast from 'react-hot-toast';
 
 const schema = z.object({
@@ -24,7 +24,6 @@ const DEMO_ACCOUNTS = [
 ];
 
 const ROLE_REDIRECT = { client: '/client/dashboard', cb: '/cb/dashboard', amc: '/amc/dashboard', admin: '/admin/dashboard' };
-const ROLE_NAMES    = { client: 'Suraj Kumar', cb: 'Vikram CB', amc: 'Mugilan AMC', admin: 'Admin User' };
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,12 +41,22 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1200));
-    const mockUser = { ...MOCK_USER, role: data.role, email: data.email, name: ROLE_NAMES[data.role] };
-    login(mockUser, 'mock_jwt_token_' + data.role);
-    toast.success(`Welcome, ${mockUser.name}!`);
-    navigate(location.state?.from?.pathname || ROLE_REDIRECT[data.role], { replace: true });
-    setLoading(false);
+    try {
+      const res = await writeClient.post('/auth/login', {
+        email: data.email,
+        password: data.password,
+        role: data.role,
+      });
+      const { user, token } = res.data;
+      login(user, token);
+      toast.success(`Welcome back, ${user.name}!`);
+      navigate(location.state?.from?.pathname || ROLE_REDIRECT[user.role], { replace: true });
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Login failed. Please try again.';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const ROLE_OPTS = [

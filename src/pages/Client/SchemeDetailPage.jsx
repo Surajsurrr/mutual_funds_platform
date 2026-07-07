@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Star, TrendingUp } from 'lucide-react';
-import { MOCK_SCHEMES, MOCK_NAV_HISTORY } from '../../utils/mockData';
+import { useScheme, useNavHistory } from '../../api/useApi';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { getRiskColor } from '../../utils/formatters';
@@ -16,13 +16,24 @@ export default function SchemeDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [period, setPeriod] = useState('1Y');
-  const scheme = MOCK_SCHEMES.find(s => s.id === id) || MOCK_SCHEMES[0];
+  const PERIOD_DAYS = { '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '3Y': 365, '5Y': 365 };
+  const { data: scheme, loading: schemeLoading } = useScheme(id);
+  const { data: navHistory } = useNavHistory(id, PERIOD_DAYS[period] || 365);
+  const chartData = navHistory ?? [];
+
+
+  if (schemeLoading || !scheme) return (
+    <div className="flex items-center justify-center h-64">
+      <p className="text-slate-400 text-sm">{schemeLoading ? 'Loading scheme...' : 'Scheme not found'}</p>
+    </div>
+  );
 
   return (
     <div className="space-y-6 pb-8 max-w-5xl">
       <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium transition-colors" style={{ color: '#7a94ab' }}>
         <ArrowLeft size={16} /> Back
       </button>
+
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl overflow-hidden" style={CARD}>
         <div className="h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
@@ -72,7 +83,7 @@ export default function SchemeDetailPage() {
         </div>
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={MOCK_NAV_HISTORY}>
+            <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="navGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%"  stopColor="#1b9af5" stopOpacity={0.25} />

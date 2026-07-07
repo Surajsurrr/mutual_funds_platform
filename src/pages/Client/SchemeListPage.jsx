@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Star, ShoppingCart } from 'lucide-react';
-import { MOCK_SCHEMES } from '../../utils/mockData';
+import { useSchemes } from '../../api/useApi';
 import { Badge } from '../../components/UI/Badge';
 import { getRiskColor } from '../../utils/formatters';
 
@@ -44,14 +44,26 @@ export default function SchemeListPage() {
   const [risk, setRisk]         = useState('All');
   const [sortBy, setSortBy]     = useState('returns1Y');
 
-  const filtered = MOCK_SCHEMES
+  const { data: rawSchemes, loading } = useSchemes({
+    amcId: new URLSearchParams(window.location.search).get('amc') || '',
+    category: category !== 'All' ? category : '',
+    search: search,
+  });
+
+  const allSchemes = rawSchemes ?? [];
+  const filtered = allSchemes
     .filter(s => {
-      const ms = s.name.toLowerCase().includes(search.toLowerCase());
-      const mc = category === 'All' || s.category === category;
-      const mr = risk === 'All'     || s.risk === risk;
-      return ms && mc && mr;
+      const mr = risk === 'All' || s.risk === risk;
+      return mr;
     })
-    .sort((a,b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy]));
+    .sort((a, b) => {
+      if (sortBy === 'aum') {
+        const na = parseFloat((a.aum || '0').toString().replace(/,/g, ''));
+        const nb = parseFloat((b.aum || '0').toString().replace(/,/g, ''));
+        return nb - na;
+      }
+      return (b[sortBy] || 0) - (a[sortBy] || 0);
+    });
 
   return (
     <div className="pb-8">
@@ -61,7 +73,7 @@ export default function SchemeListPage() {
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Invest Now</p>
         <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Mutual Fund Schemes</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
-        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>{MOCK_SCHEMES.length} schemes across all AMCs</p>
+        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>{filtered.length} schemes across all AMCs</p>
       </motion.div>
 
       {/* Filter Panel Container */}

@@ -1,0 +1,31 @@
+{
+  "name": "fundflow-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FundFlow mutual funds backend — one Postgres primary, cache/replica/queue layers per the 'How to Handle Lakhs of Users' playbook",
+  "scripts": {
+    "dev": "node scripts/dev-stack.js",
+    "start": "node src/server.js",
+    "start:web": "cross-env API_ROLE=web node src/server.js",
+    "deploy:start": "node scripts/deploy-start.js",
+    "start:read": "cross-env API_ROLE=read node src/server.js",
+    "start:write": "cross-env API_ROLE=write node src/server.js",
+    "start:worker": "cross-env API_ROLE=worker node src/server.js",
+    "db:setup": "node scripts/db-setup.js",
+    "job:nav": "node scripts/run-nav-job.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "ioredis": "^5.4.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "embedded-postgres": "17.10.0-beta.17"
+  }
+}

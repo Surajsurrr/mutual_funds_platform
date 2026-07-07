@@ -8,6 +8,7 @@ import { User, Mail, Lock, Phone, CreditCard, Eye, EyeOff, Check, ChevronRight }
 import { Button } from '../../components/UI/Button';
 import { Input } from '../../components/UI/Input';
 import { useAuthStore } from '../../store/authStore';
+import { writeClient } from '../../api/axiosClients';
 import toast from 'react-hot-toast';
 
 const STEPS = ['Account', 'Personal', 'KYC'];
@@ -31,11 +32,28 @@ export default function RegisterPage() {
     if (step < STEPS.length - 1) { setStep(s => s + 1); reset(); }
     else {
       setLoading(true);
-      await new Promise(r => setTimeout(r, 1500));
-      login({ id: 'USR' + Math.floor(Math.random()*100000), name: merged.name, email: merged.email, role: 'client', kycStatus: 'pending', joinedAt: new Date().toISOString().split('T')[0] }, 'mock_jwt_client');
-      toast.success('Account created! Welcome to FundFlow 🎉');
-      navigate('/client/dashboard');
-      setLoading(false);
+      try {
+        const res = await writeClient.post('/auth/register', {
+          email:       merged.email,
+          password:    merged.password,
+          name:        merged.name,
+          phone:       merged.phone,
+          dob:         merged.dob,
+          pan:         merged.pan.toUpperCase(),
+          aadhaar:     merged.aadhaar,
+          bankAccount: merged.bankAccount,
+          ifsc:        merged.ifsc.toUpperCase(),
+        });
+        const { user, token } = res.data;
+        login(user, token);
+        toast.success('Account created! KYC verification in progress 🎉');
+        navigate('/client/dashboard');
+      } catch (err) {
+        const msg = err.response?.data?.error || 'Registration failed. Please try again.';
+        toast.error(msg);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

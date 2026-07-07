@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Star, ChevronRight } from 'lucide-react';
-import { MOCK_AMC_LIST } from '../../utils/mockData';
+import { useAmcs } from '../../api/useApi';
 
 const CATEGORIES = ['All','Large Cap','Equity','Diversified','Debt','Balanced','Index','Multi Cap','Growth','Value'];
 
@@ -19,7 +19,9 @@ export default function AMCListPage() {
   const [search, setSearch]     = useState('');
   const [category, setCategory] = useState('All');
 
-  const filtered = MOCK_AMC_LIST.filter(a => {
+  const { data: amcList, loading } = useAmcs();
+
+  const filtered = (amcList ?? []).filter(a => {
     const ms = a.name.toLowerCase().includes(search.toLowerCase());
     const mc = category === 'All' || a.category === category;
     return ms && mc;
@@ -33,7 +35,7 @@ export default function AMCListPage() {
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Browse Partners</p>
         <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>AMC Companies</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
-        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Choose from {MOCK_AMC_LIST.length} trusted Asset Management Companies</p>
+        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Choose from {filtered.length} trusted Asset Management Companies</p>
       </motion.div>
 
       {/* Search Input Container */}

@@ -14,6 +14,10 @@ import { PrivateRoute, RoleRoute, PublicRoute } from './PrivateRoute';
 import LoginPage from '../pages/Auth/LoginPage';
 import RegisterPage from '../pages/Auth/RegisterPage';
 
+// Account Pages (all roles)
+import ProfilePage from '../pages/Profile/ProfilePage';
+import SettingsPage from '../pages/Profile/SettingsPage';
+
 // Client Pages
 import ClientDashboard from '../pages/Client/ClientDashboard';
 import AMCListPage from '../pages/Client/AMCListPage';
@@ -72,6 +76,14 @@ export const AppRoutes = () => {
 
         {/* Unauthorized */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+        {/* ─── Account Routes (any authenticated role) ─── */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
 
         {/* ─── Client Routes ─── */}
         <Route element={<RoleRoute allowedRoles={['client', 'admin']} />}>

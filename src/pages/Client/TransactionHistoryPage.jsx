@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
-import { MOCK_TRANSACTIONS } from '../../utils/mockData';
+import { useTransactions } from '../../api/useApi';
 import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
@@ -18,8 +18,11 @@ const CARD = {
 
 export default function TransactionHistoryPage() {
   const [filter, setFilter] = useState('All');
-  const filtered = filter === 'All' ? MOCK_TRANSACTIONS : MOCK_TRANSACTIONS.filter(t => t.type === filter);
-  const successTxns = MOCK_TRANSACTIONS.filter(t => t.status === 'success');
+  const apiType = filter === 'All' ? '' : filter;
+  const { data: allTxns, loading } = useTransactions(apiType, 500);
+
+  const transactions = allTxns ?? [];
+  const successTxns  = transactions.filter(t => t.status === 'success');
 
   const columns = [
     { key:'id',     header:'Txn ID',  accessor:'id',         render: r => <span className="text-xs font-mono" style={{ color: '#7a94ab' }}>{r.id}</span> },
@@ -31,6 +34,7 @@ export default function TransactionHistoryPage() {
     { key:'nav',    header:'NAV',     accessor:'nav',        render: r => <span className="text-xs" style={{ color: '#b0c4d8' }}>₹{r.nav}</span> },
     { key:'status', header:'Status',  accessor:'status',     render: r => <Badge variant={getStatusColor(r.status).replace('badge-','')}>{r.status}</Badge> },
   ];
+
 
   return (
     <div className="pb-8">
@@ -49,10 +53,10 @@ export default function TransactionHistoryPage() {
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
         {[
-          { label:'Total Transactions', val: MOCK_TRANSACTIONS.length,   color: '#12B4C3' },
+          { label:'Total Transactions', val: transactions.length,   color: '#12B4C3' },
           { label:'Total Invested',     val: formatCurrency(successTxns.reduce((a,t)=>a+t.amount,0),true), color: '#fff' },
           { label:'Successful',         val: successTxns.length,         color: '#34d399' },
-          { label:'Failed',             val: MOCK_TRANSACTIONS.filter(t=>t.status==='failed').length, color: '#f87171' },
+          { label:'Failed',             val: transactions.filter(t=>t.status==='failed').length, color: '#f87171' },
         ].map(s => (
           <div key={s.label}
             style={{
@@ -84,7 +88,7 @@ export default function TransactionHistoryPage() {
 
       {/* Data Table Card Wrapper */}
       <div className="rounded-2xl" style={CARD}>
-        <DataTable columns={columns} data={filtered} searchable searchPlaceholder="Search transactions..." pageSize={8} />
+        <DataTable columns={columns} data={transactions} searchable searchPlaceholder="Search transactions..." pageSize={8} />
       </div>
     </div>
   );

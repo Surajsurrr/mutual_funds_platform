@@ -4,6 +4,7 @@ import { Users, TrendingUp, DollarSign, Calendar, Search, ArrowUpRight } from 'l
 import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { StatsCard } from '../../components/UI/StatsCard';
+import { useAmcInvestors } from '../../api/useApi';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 const CARD = {
@@ -15,22 +16,13 @@ const CARD = {
   padding: '2.25rem',
 };
 
-const MOCK_AMC_INVESTORS = [
-  { id: 'INV001', name: 'Suraj Kumar', email: 'client@fundflow.in', scheme: 'HDFC Top 100 Fund', units: 32.42, invested: 27561, value: 30097, gain: 2536, sip: 'Active' },
-  { id: 'INV001', name: 'Suraj Kumar', email: 'client@fundflow.in', scheme: 'Mirae Asset Large Cap', units: 1224.80, invested: 68946, value: 115927, gain: 46981, sip: 'Active' },
-  { id: 'INV002', name: 'Amit Sharma', email: 'amit.sharma@gmail.com', scheme: 'HDFC Mid-Cap Opportunities', units: 154.20, invested: 20000, value: 23800, gain: 3800, sip: 'Active' },
-  { id: 'INV003', name: 'Rohan Verma', email: 'rohan.v@yahoo.com', scheme: 'HDFC Top 100 Fund', units: 10.75, invested: 9000, value: 9980, gain: 980, sip: 'None' },
-  { id: 'INV004', name: 'Neha Gupta', email: 'neha.gupta@outlook.com', scheme: 'ICICI Pru Value Discovery', units: 92.18, invested: 28806, value: 34933, gain: 6127, sip: 'Active' },
-  { id: 'INV005', name: 'Karan Malhotra', email: 'karan.m@gmail.com', scheme: 'SBI Bluechip Fund', units: 275.40, invested: 18000, value: 19850, gain: 1850, sip: 'Paused' },
-  { id: 'INV006', name: 'Sneha Patil', email: 'sneha.patil@rediffmail.com', scheme: 'Mirae Asset Large Cap', units: 50.50, invested: 4500, value: 4780, gain: 280, sip: 'None' },
-  { id: 'INV007', name: 'Vikram Singh', email: 'vikram.s@outlook.com', scheme: 'Axis Small Cap Fund', units: 220.15, invested: 15000, value: 19230, gain: 4230, sip: 'Active' }
-];
-
 export default function AMCInvestorsPage() {
+  const { data: apiInvestors } = useAmcInvestors();
   const [search, setSearch] = useState('');
   const [sipFilter, setSipFilter] = useState('All');
 
-  const filtered = MOCK_AMC_INVESTORS.filter(i => {
+  const investors = apiInvestors ?? [];
+  const filtered = investors.filter(i => {
     const matchesSearch = i.name.toLowerCase().includes(search.toLowerCase()) || 
                           i.scheme.toLowerCase().includes(search.toLowerCase()) ||
                           i.id.toLowerCase().includes(search.toLowerCase());
@@ -38,10 +30,10 @@ export default function AMCInvestorsPage() {
     return matchesSearch && matchesSip;
   });
 
-  const totalAUM = MOCK_AMC_INVESTORS.reduce((sum, item) => sum + item.value, 0);
-  const totalInvested = MOCK_AMC_INVESTORS.reduce((sum, item) => sum + item.invested, 0);
-  const activeSips = MOCK_AMC_INVESTORS.filter(i => i.sip === 'Active').length;
-  const uniqueInvestors = new Set(MOCK_AMC_INVESTORS.map(i => i.email)).size;
+  const totalAUM = investors.reduce((sum, item) => sum + item.value, 0);
+  const totalInvested = investors.reduce((sum, item) => sum + item.invested, 0);
+  const activeSips = investors.filter(i => i.sip === 'Active').length;
+  const uniqueInvestors = new Set(investors.map(i => i.email)).size;
 
   const columns = [
     { key:'id',        header:'Investor ID', accessor:'id', render: r => <span className="text-xs font-mono" style={{ color: '#7a94ab' }}>{r.id}</span> },

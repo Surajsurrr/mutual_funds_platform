@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, PieChart as PieIcon, ShoppingCart } from 'lucide-react';
-import { MOCK_PORTFOLIO } from '../../utils/mockData';
+import { usePortfolio } from '../../api/useApi';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
@@ -27,13 +27,22 @@ const TOOLTIP = {
 };
 
 export default function PortfolioPage() {
-  const { totalInvested, currentValue, totalGain, totalGainPct, dayChange, dayChangePct, holdings } = MOCK_PORTFOLIO;
+  const { data: portfolio, loading } = usePortfolio();
+
+  const totalInvested = portfolio?.totalInvested ?? 0;
+  const currentValue  = portfolio?.currentValue  ?? 0;
+  const totalGain     = portfolio?.totalGain     ?? 0;
+  const totalGainPct  = portfolio?.totalGainPct  ?? 0;
+  const dayChange     = portfolio?.dayChange     ?? 0;
+  const dayChangePct  = portfolio?.dayChangePct  ?? 0;
+  const holdings      = portfolio?.holdings      ?? [];
 
   const pieData = holdings.map(h => ({
     name: h.schemeName.split(' ').slice(0,2).join(' '),
     value: h.currentValue,
-    pct: ((h.currentValue/currentValue)*100).toFixed(1),
+    pct: currentValue > 0 ? ((h.currentValue/currentValue)*100).toFixed(1) : '0.0',
   }));
+
 
   return (
     <div className="pb-8">

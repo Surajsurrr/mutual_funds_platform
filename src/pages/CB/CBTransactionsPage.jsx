@@ -5,8 +5,10 @@ import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { StatsCard } from '../../components/UI/StatsCard';
-import { MOCK_TRANSACTIONS } from '../../utils/mockData';
+import { useCbTransactions } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
 import { formatDate, formatCurrency } from '../../utils/formatters';
+import toast from 'react-hot-toast';
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -17,21 +19,12 @@ const CARD = {
   padding: '2.25rem',
 };
 
-// Add clientName to transactions mock structure
-const ENRICHED_TXNS = MOCK_TRANSACTIONS.map((t, idx) => {
-  const clients = ['Suraj Kumar', 'Amit Sharma', 'Neha Gupta', 'Ramesh Kumar', 'Priya Sharma', 'Karan Malhotra'];
-  return {
-    ...t,
-    clientName: clients[idx % clients.length],
-    status: idx === 4 ? 'failed' : idx === 0 ? 'flagged' : t.status
-  };
-});
-
 export default function CBTransactionsPage() {
-  const [txns, setTxns] = useState(ENRICHED_TXNS);
+  const { data: apiTxns, refetch } = useCbTransactions();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
 
+  const txns = apiTxns ?? [];
   const filtered = txns.filter(t => {
     const matchesSearch = t.schemeName.toLowerCase().includes(search.toLowerCase()) || 
                           t.clientName.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,19 +33,18 @@ export default function CBTransactionsPage() {
     return matchesSearch && matchesType;
   });
 
-  const handleVerify = (id) => {
-    setTxns(prev => prev.map(t => t.id === id ? { ...t, status: 'success' } : t));
-    alert(`Transaction ${id} verified and updated!`);
+  const handleVerify = async (id) => {
+    try {
+      await writeClient.patch(`/cb/transactions/${id}/verify`);
+      toast.success(`Transaction ${id} verified!`);
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to verify transaction');
+    }
   };
 
-  const handleToggleFlag = (id) => {
-    setTxns(prev => prev.map(t => {
-      if (t.id === id) {
-        const nextStatus = t.status === 'flagged' ? 'success' : 'flagged';
-        return { ...t, status: nextStatus };
-      }
-      return t;
-    }));
+  const handleManualFlag = () => {
+    toast.error('Manual flagging is not supported by backend rules.');
   };
 
   const columns = [
@@ -69,16 +61,11 @@ export default function CBTransactionsPage() {
     { key:'actions',    header:'Actions', render: r => (
       <div className="flex gap-2">
         {r.status === 'flagged' ? (
-          <>
-            <button onClick={() => handleVerify(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#34d399' }} title="Verify Success">
-              <CheckCircle2 size={14} />
-            </button>
-            <button onClick={() => handleToggleFlag(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#ef4444' }} title="Clear Flag">
-              <ShieldAlert size={14} />
-            </button>
-          </>
+          <button onClick={() => handleVerify(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#34d399' }} title="Verify Success">
+            <CheckCircle2 size={14} />
+          </button>
         ) : (
-          <button onClick={() => handleToggleFlag(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#7a94ab' }} title="Flag Transaction">
+          <button onClick={() => handleManualFlag()} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#7a94ab' }} title="Flag Transaction">
             <ShieldAlert size={14} />
           </button>
         )}
@@ -101,7 +88,7 @@ export default function CBTransactionsPage() {
           <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
           <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Audit transaction histories, cancel fraudulent orders, and release held balances</p>
         </div>
-        <Button variant="secondary" icon={RefreshCw} onClick={() => alert('Transactions synced!')}>Sync Ledger</Button>
+        <Button variant="secondary" icon={RefreshCw} onClick={() => refetch()}>Sync Ledger</Button>
       </motion.div>
 
       {/* Stats row */}

@@ -5,6 +5,9 @@ import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { StatsCard } from '../../components/UI/StatsCard';
+import { useAdminUsers } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
+import toast from 'react-hot-toast';
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -15,21 +18,15 @@ const CARD = {
   padding: '2.25rem',
 };
 
-const MOCK_ALL_USERS = [
-  { id: 'USR001', name: 'Suraj Kumar', email: 'client@fundflow.in', role: 'client', status: 'Active', joined: '2026-04-12' },
-  { id: 'USR002', name: 'Vikram CB', email: 'cb@fundflow.in', role: 'cb', status: 'Active', joined: '2026-04-15' },
-  { id: 'USR003', name: 'Mugilan AMC', email: 'amc@fundflow.in', role: 'amc', status: 'Active', joined: '2026-04-20' },
-  { id: 'USR004', name: 'Admin User', email: 'admin@fundflow.in', role: 'admin', status: 'Active', joined: '2026-04-01' },
-  { id: 'USR005', name: 'Ramesh Kumar', email: 'ramesh.kumar@gmail.com', role: 'client', status: 'Blocked', joined: '2026-05-10' },
-  { id: 'USR006', name: 'Priya Sharma', email: 'priya.sharma@yahoo.com', role: 'client', status: 'Active', joined: '2026-05-12' },
-  { id: 'USR007', name: 'Karan Malhotra', email: 'karan.m@gmail.com', role: 'client', status: 'Suspended', joined: '2026-06-01' }
-];
+
+
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState(MOCK_ALL_USERS);
+  const { data: apiUsers, refetch } = useAdminUsers();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
 
+  const users = apiUsers ?? [];
   const filtered = users.filter(u => {
     const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase()) || 
                           u.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -38,23 +35,21 @@ export default function AdminUsersPage() {
     return matchesSearch && matchesRole;
   });
 
-  const handleToggleStatus = (id) => {
-    setUsers(prev => prev.map(u => {
-      if (u.id === id) {
-        let nextStatus = 'Active';
-        if (u.status === 'Active') nextStatus = 'Suspended';
-        else if (u.status === 'Suspended') nextStatus = 'Blocked';
-        else if (u.status === 'Blocked') nextStatus = 'Active';
-        return { ...u, status: nextStatus };
-      }
-      return u;
-    }));
+  const STATUS_CYCLE = { Active: 'Suspended', Suspended: 'Blocked', Blocked: 'Active', Flagged: 'Active' };
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    const nextStatus = STATUS_CYCLE[currentStatus] || 'Active';
+    try {
+      await writeClient.patch(`/admin/users/${id}/status`, { status: nextStatus });
+      toast.success(`User status updated to ${nextStatus}`);
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update status');
+    }
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(prev => prev.filter(u => u.id !== id));
-    }
+    toast('User deletion requires admin console access.', { icon: '⚠️' });
   };
 
   const columns = [
@@ -76,7 +71,7 @@ export default function AdminUsersPage() {
     { key:'joined',    header:'Date Joined', accessor:'joined', render: r => <span className="text-xs text-slate-300">{r.joined}</span> },
     { key:'actions',   header:'Actions',     render: r => (
       <div className="flex gap-2">
-        <button onClick={() => handleToggleStatus(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'Blocked' ? '#34d399' : '#f87171' }} title="Toggle Lock Status">
+        <button onClick={() => handleToggleStatus(r.id, r.status)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'Blocked' ? '#34d399' : '#f87171' }} title="Toggle Lock Status">
           <Ban size={14} />
         </button>
         <button onClick={() => handleDelete(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#f87171' }} title="Remove User">

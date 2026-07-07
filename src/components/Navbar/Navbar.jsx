@@ -154,15 +154,15 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                       <p className="text-xs mt-1" style={{ color: '#a0aec0' }}>{user?.email}</p>
                     </div>
                     {[
-                      { icon: User,     label: 'Profile' },
-                      { icon: Settings, label: 'Settings' },
+                      { icon: User,     label: 'Profile',  to: '/profile' },
+                      { icon: Settings, label: 'Settings', to: '/settings' },
                     ].map(item => (
                       <button key={item.label}
                         className="flex items-center gap-3 w-full text-sm transition-colors"
                         style={{ color: '#cbd5e1', padding: '0.75rem 1.25rem' }}
                         onMouseEnter={e => { e.currentTarget.style.background='rgba(18,180,195,0.06)'; e.currentTarget.style.color='#12B4C3'; }}
                         onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#cbd5e1'; }}
-                        onClick={() => setProfileOpen(false)}>
+                        onClick={() => { setProfileOpen(false); navigate(item.to); }}>
                         <item.icon size={15} />
                         {item.label}
                       </button>

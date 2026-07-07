@@ -5,6 +5,9 @@ import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { StatsCard } from '../../components/UI/StatsCard';
+import { useAdminAmcs, useAdminPending } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
+import toast from 'react-hot-toast';
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -15,51 +18,45 @@ const CARD = {
   padding: '2.25rem',
 };
 
-const MOCK_AMCS_LIST = [
-  { id: 'AMC001', name: 'HDFC Mutual Fund', email: 'support@hdfcmf.com', aum: 29431, commission: 0.15, status: 'Active' },
-  { id: 'AMC002', name: 'Mirae Asset Mutual Fund', email: 'partners@miraeasset.com', aum: 38920, commission: 0.18, status: 'Active' },
-  { id: 'AMC003', name: 'ICICI Prudential Mutual Fund', email: 'support@iciciprumf.com', aum: 35670, commission: 0.15, status: 'Active' },
-  { id: 'AMC004', name: 'SBI Mutual Fund', email: 'sbimf@sbimf.com', aum: 44120, commission: 0.12, status: 'Active' },
-  { id: 'AMC005', name: 'Axis Mutual Fund', email: 'axis@axismf.com', aum: 18340, commission: 0.20, status: 'Suspended' }
-];
-
 export default function AdminAMCsPage() {
-  const [amcs, setAmcs] = useState(MOCK_AMCS_LIST);
+  const { data: apiAmcs, refetch: refetchAmcs } = useAdminAmcs();
+  const { data: apiPending, refetch: refetchPending } = useAdminPending();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  // Pending Approvals Mock
-  const [pendingList, setPendingList] = useState([
-    { id:'A43', name:'Sundaram Mutual Fund', applied:'2026-06-25', aum:'₹12,400 Cr' },
-    { id:'A44', name:'Motilal Oswal AMC',    applied:'2026-06-28', aum:'₹8,900 Cr'  },
-  ]);
+  const amcs = apiAmcs ?? [];
+  const pendingList = apiPending ?? [];
 
-  const handleApprove = (p) => {
-    const newAmc = {
-      id: `AMC-${Date.now()}`,
-      name: p.name,
-      email: `support@${p.name.toLowerCase().replace(/ /g, '')}.com`,
-      aum: parseInt(p.aum.replace(/[^0-9]/g, '')) || 5000,
-      commission: 0.15,
-      status: 'Active'
-    };
-    setAmcs(prev => [newAmc, ...prev]);
-    setPendingList(prev => prev.filter(item => item.id !== p.id));
-    alert(`${p.name} license has been approved!`);
+  const handleApprove = async (p) => {
+    try {
+      await writeClient.post(`/admin/amcs/${p.id}/approve`);
+      toast.success(`${p.name} license has been approved!`);
+      refetchAmcs();
+      refetchPending();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to approve AMC');
+    }
   };
 
-  const handleReject = (id, name) => {
-    setPendingList(prev => prev.filter(item => item.id !== id));
-    alert(`${name} license request rejected.`);
+  const handleReject = async (id, name) => {
+    try {
+      await writeClient.post(`/admin/amcs/${id}/reject`);
+      toast.success(`${name} license request rejected.`);
+      refetchPending();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to reject AMC');
+    }
   };
 
-  const handleToggleStatus = (id) => {
-    setAmcs(prev => prev.map(a => {
-      if (a.id === id) {
-        return { ...a, status: a.status === 'Active' ? 'Suspended' : 'Active' };
-      }
-      return a;
-    }));
+  const handleToggleStatus = async (id, currentStatus) => {
+    const nextStatus = currentStatus === 'Active' ? 'Suspended' : 'Active';
+    try {
+      await writeClient.patch(`/admin/amcs/${id}/status`, { status: nextStatus });
+      toast.success(`AMC ${nextStatus === 'Active' ? 'activated' : 'suspended'}`);
+      refetchAmcs();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update status');
+    }
   };
 
   const filtered = amcs.filter(a => {
@@ -82,8 +79,8 @@ export default function AdminAMCsPage() {
     }},
     { key:'actions',    header:'Actions',     render: r => (
       <div className="flex gap-2">
-        <button onClick={() => handleToggleStatus(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'Active' ? '#f87171' : '#34d399' }} title="Toggle Status">
-          <Ban size={14} />
+        <button onClick={() => handleToggleStatus(r.id, r.status)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'Suspended' ? '#34d399' : '#fbbf24' }} title={r.status === 'Suspended' ? 'Reactivate' : 'Suspend'}>
+          {r.status === 'Suspended' ? <Check size={14} /> : <Ban size={14} />}
         </button>
       </div>
     )},

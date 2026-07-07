@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, AlertCircle, Calculator } from 'lucide-react';
-import { MOCK_SCHEMES } from '../../utils/mockData';
+import { useScheme } from '../../api/useApi';
+import { readClient, writeClient } from '../../api/axiosClients';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
 import { formatCurrency } from '../../utils/formatters';
@@ -20,7 +21,7 @@ const CARD = {
 export default function BuyPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const scheme = MOCK_SCHEMES.find(s => s.id === id) || MOCK_SCHEMES[0];
+  const { data: scheme, loading: schemeLoading } = useScheme(id);
 
   const [mode,        setMode]        = useState('lumpsum');
   const [amount,      setAmount]      = useState('');
@@ -28,6 +29,30 @@ export default function BuyPage() {
   const [loading,     setLoading]     = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [clientRef,   setClientRef]   = useState('');
+  const [orderStatus, setOrderStatus] = useState('PENDING');
+
+  // Poll the read-after-write endpoint until the queued order settles
+  useEffect(() => {
+    if (!orderPlaced || !clientRef) return;
+    let stopped = false;
+    let timer;
+    const poll = async () => {
+      try {
+        const res = await readClient.get(`/orders/${clientRef}`);
+        if (stopped) return;
+        const s = res.data?.status || 'PENDING';
+        setOrderStatus(s);
+        if (s === 'SUCCESS' || s === 'DEAD' || s === 'FAILED') return;
+      } catch { /* transient — keep polling */ }
+      if (!stopped) timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 1500);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [orderPlaced, clientRef]);
+
+  if (schemeLoading) return <div className="flex items-center justify-center h-64"><p className="text-slate-400 text-sm">Loading scheme...</p></div>;
+  if (!scheme) return <div className="flex items-center justify-center h-64"><p className="text-slate-400 text-sm">Scheme not found.</p></div>;
 
   const numAmount = parseFloat(amount) || 0;
   const units     = numAmount > 0 ? (numAmount / scheme.nav).toFixed(4) : 0;
@@ -39,9 +64,32 @@ export default function BuyPage() {
 
   const handleOrder = async () => {
     setLoading(true);
-    await new Promise(r => setTimeout(r, 1800));
-    setLoading(false); setShowConfirm(false); setOrderPlaced(true);
+    try {
+      const ref = `REF-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+      await writeClient.post('/orders', {
+        clientRef: ref,
+        schemeId: scheme.id,
+        type: mode === 'sip' ? 'SIP' : 'BUY',
+        amount: numAmount,
+        sipDate: mode === 'sip' ? parseInt(sipDate, 10) : undefined,
+      });
+      setClientRef(ref);
+      setOrderStatus('PENDING');
+      setShowConfirm(false);
+      setOrderPlaced(true);
+      toast.success('Order placed successfully!');
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Failed to place order. Please try again.';
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const statusDisplay =
+    orderStatus === 'SUCCESS' ? '✅ Completed'
+    : orderStatus === 'DEAD' || orderStatus === 'FAILED' ? '❌ Failed'
+    : '⏳ Processing';
 
   if (orderPlaced) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
@@ -55,14 +103,14 @@ export default function BuyPage() {
         <p className="mt-2" style={{ color: '#b0c4d8' }}>Your investment of <span className="text-white font-bold">{formatCurrency(numAmount)}</span> in</p>
         <p className="font-bold text-lg mt-1" style={{ color: '#12B4C3' }}>{scheme.name}</p>
         <div className="rounded-2xl mt-6 text-left space-y-2.5 max-w-sm mx-auto" style={CARD}>
-          {[['Units', units],['NAV',`₹${scheme.nav}`],['Type',mode==='sip'?'SIP':'One-time'],['Status','⏳ Processing']].map(([l,v]) => (
+          {[['Units', units],['NAV',`₹${scheme.nav}`],['Type',mode==='sip'?'SIP':'One-time'],['Status',statusDisplay]].map(([l,v]) => (
             <p key={l} className="text-sm" style={{ color: '#b0c4d8' }}><span style={{ color: '#7a94ab' }}>{l}:</span> <span className="font-semibold text-white">{v}</span></p>
           ))}
         </div>
       </motion.div>
       <div className="flex gap-3 mt-4">
         <Button variant="secondary" onClick={() => navigate('/client/portfolio')}>View Portfolio</Button>
-        <Button variant="primary" onClick={() => { setOrderPlaced(false); setAmount(''); }}>Invest More</Button>
+        <Button variant="primary" onClick={() => { setOrderPlaced(false); setAmount(''); setClientRef(''); setOrderStatus('PENDING'); }}>Invest More</Button>
       </div>
     </div>
   );

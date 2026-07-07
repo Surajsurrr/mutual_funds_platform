@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Search, Play, Pause } from 'lucide-react';
 import { DataTable } from '../../components/UI/DataTable';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
-import { MOCK_SCHEMES } from '../../utils/mockData';
+import { useAmcSchemes } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
 import { getRiskColor, formatCurrency } from '../../utils/formatters';
+import toast from 'react-hot-toast';
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -21,7 +24,7 @@ const CATEGORIES = ['All', 'Large Cap', 'Mid Cap', 'Small Cap', 'Value', 'ELSS']
 const RISK_LEVELS = ['Low', 'Moderate', 'High', 'Very High'];
 
 export default function AMCSchemesPage() {
-  const [schemes, setSchemes] = useState(MOCK_SCHEMES);
+  const { data: apiSchemes, refetch } = useAmcSchemes();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   
@@ -36,12 +39,12 @@ export default function AMCSchemesPage() {
   const [aum, setAum] = useState('');
   const [risk, setRisk] = useState('Moderate');
 
-  const filtered = schemes
-    .filter(s => {
-      const ms = s.name.toLowerCase().includes(search.toLowerCase());
-      const mc = category === 'All' || s.category === category;
-      return ms && mc;
-    });
+  const schemes = apiSchemes ?? [];
+  const filtered = schemes.filter(s => {
+    const ms = s.name.toLowerCase().includes(search.toLowerCase());
+    const mc = category === 'All' || s.category === category;
+    return ms && mc;
+  });
 
   const handleOpenAdd = () => {
     setEditingScheme(null);
@@ -63,51 +66,66 @@ export default function AMCSchemesPage() {
     setShowModal(true);
   };
 
-  const handleSave = () => {
+  // Deep links from the dashboard: ?add=true opens the add modal, ?edit=<id> opens edit
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (searchParams.get('add') === 'true') {
+      handleOpenAdd();
+      setSearchParams({}, { replace: true });
+    } else if (editId && apiSchemes) {
+      const s = apiSchemes.find(x => x.id === editId);
+      if (s) handleOpenEdit(s);
+      setSearchParams({}, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiSchemes]);
+
+  const handleSave = async () => {
     if (!name || !nav || !aum) {
-      alert('Please fill out all fields');
+      toast.error('Please fill out all fields');
       return;
     }
-
-    if (editingScheme) {
-      // Edit existing
-      setSchemes(prev => prev.map(s => s.id === editingScheme.id ? {
-        ...s, name, category: cat, nav: parseFloat(nav), aum: parseInt(aum), risk
-      } : s));
-    } else {
-      // Add new
-      const newScheme = {
-        id: `scheme-${Date.now()}`,
-        name,
-        category: cat,
-        nav: parseFloat(nav),
-        returns1Y: 15.0,
-        returns3Y: 14.5,
-        returns5Y: 13.0,
-        aum: parseInt(aum),
-        risk,
-        rating: 4,
-        minSIP: 500,
-        minLumpsum: 1000,
-        dayChange: 0.5,
-        dayChangePct: 0.35,
-        status: 'active'
-      };
-      setSchemes(prev => [newScheme, ...prev]);
-    }
-    setShowModal(false);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this scheme?')) {
-      setSchemes(prev => prev.filter(s => s.id !== id));
+    try {
+      if (editingScheme) {
+        await writeClient.patch(`/amc/schemes/${editingScheme.id}`, {
+          name, category: cat, nav: parseFloat(nav), aumCr: parseFloat(aum), risk
+        });
+        toast.success('Scheme updated!');
+      } else {
+        await writeClient.post('/amc/schemes', {
+          name, category: cat, nav: parseFloat(nav), aumCr: parseFloat(aum), risk,
+          minSip: 500, minLumpsum: 1000,
+        });
+        toast.success('Scheme created!');
+      }
+      setShowModal(false);
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to save scheme');
     }
   };
 
-  const handleToggleStatus = (id) => {
-    setSchemes(prev => prev.map(s => s.id === id ? {
-      ...s, status: s.status === 'suspended' ? 'active' : 'suspended'
-    } : s));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this scheme?')) return;
+    try {
+      await writeClient.delete(`/amc/schemes/${id}`);
+      toast.success('Scheme deleted.');
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete scheme');
+    }
+  };
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    const next = currentStatus === 'Active' ? 'Suspended' : 'Active';
+    try {
+      await writeClient.patch(`/amc/schemes/${id}`, { status: next });
+      toast.success(`Scheme ${next === 'Active' ? 'activated' : 'suspended'}`);
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update status');
+    }
   };
 
   const columns = [
@@ -133,7 +151,7 @@ export default function AMCSchemesPage() {
         <button onClick={() => handleOpenEdit(r)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#12B4C3' }}>
           <Edit size={14} />
         </button>
-        <button onClick={() => handleToggleStatus(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'suspended' ? '#34d399' : '#fbbf24' }}>
+        <button onClick={() => handleToggleStatus(r.id, r.status)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: r.status === 'Suspended' ? '#34d399' : '#fbbf24' }}>
           {r.status === 'suspended' ? <Play size={14} /> : <Pause size={14} />}
         </button>
         <button onClick={() => handleDelete(r.id)} className="p-1.5 rounded-lg transition-colors hover:bg-white/5" style={{ color: '#f87171' }}>

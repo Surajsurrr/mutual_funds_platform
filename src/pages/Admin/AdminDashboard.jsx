@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import { Users, Building2, TrendingUp, Activity, Settings, Check, X } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { Button } from '../../components/UI/Button';
-import { MOCK_ADMIN_STATS } from '../../utils/mockData';
+import { useAdminStats, useAdminAnalytics, useAdminPending, useAdminSystem } from '../../api/useApi';
+import { writeClient } from '../../api/axiosClients';
 import { formatNumber } from '../../utils/formatters';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from 'recharts';
+import toast from 'react-hot-toast';
 
 const GROWTH = Array.from({ length: 12 }, (_,i) => ({
   month: ['J','F','M','A','M','J','J','A','S','O','N','D'][i],
@@ -38,11 +40,40 @@ const PENDING_AMCS = [
 ];
 
 export default function AdminDashboard() {
+  const { data: stats }    = useAdminStats();
+  const { data: analytics } = useAdminAnalytics();
+  const { data: pending, refetch: refetchPending } = useAdminPending();
+  const { data: system }   = useAdminSystem();
+
+  const growthData  = analytics?.growth    ?? [];
+  const pendingAmcs = pending             ?? [];
+
+  const handleApprove = async (id) => {
+    try {
+      await writeClient.post(`/admin/amcs/${id}/approve`);
+      toast.success('AMC approved!');
+      refetchPending();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to approve');
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await writeClient.post(`/admin/amcs/${id}/reject`);
+      toast.success('AMC rejected.');
+      refetchPending();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to reject');
+    }
+  };
+
   return (
     <div className="pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         style={{ marginBottom: '2.25rem' }}>
+
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#f87171' }}>🛡 System</p>
         <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Admin Console</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #f87171 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
@@ -52,12 +83,12 @@ export default function AdminDashboard() {
       {/* Stats Cards Row */}
       <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-6" style={{ marginBottom: '2.5rem' }}>
         {[
-          { title:'Total Users',  value:formatNumber(MOCK_ADMIN_STATS.totalUsers),        color:'blue',    icon:Users },
-          { title:'Active AMCs',  value:MOCK_ADMIN_STATS.totalAMCs,                       color:'emerald', icon:Building2 },
-          { title:'Total AUM',    value:MOCK_ADMIN_STATS.totalAUM,                        color:'amber',   icon:TrendingUp },
-          { title:'Transactions', value:formatNumber(MOCK_ADMIN_STATS.totalTransactions), color:'blue',    icon:Activity },
-          { title:'Active Now',   value:formatNumber(MOCK_ADMIN_STATS.activeUsers),       color:'emerald', icon:Users },
-          { title:'New Today',    value:MOCK_ADMIN_STATS.newUsersToday,                   color:'rose',    icon:Users },
+          { title:'Total Users',  value: formatNumber(stats?.totalUsers ?? 0),        color:'blue',    icon:Users },
+          { title:'Active AMCs',  value: stats?.totalAMCs ?? 0,                       color:'emerald', icon:Building2 },
+          { title:'Total AUM',    value: stats?.totalAUM ?? '—',                      color:'amber',   icon:TrendingUp },
+          { title:'Transactions', value: formatNumber(stats?.totalTransactions ?? 0), color:'blue',    icon:Activity },
+          { title:'Active Now',   value: formatNumber(stats?.activeUsers ?? 0),       color:'emerald', icon:Users },
+          { title:'New Today',    value: stats?.newUsersToday ?? 0,                   color:'rose',    icon:Users },
         ].map((s,i) => <StatsCard key={s.title} {...s} delay={i*0.06} />)}
       </div>
 
@@ -68,7 +99,7 @@ export default function AdminDashboard() {
           <h2 className="text-base font-bold text-white mb-5">User Growth</h2>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={GROWTH}>
+              <LineChart data={growthData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#7a94ab' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#7a94ab' }} axisLine={false} tickLine={false} tickFormatter={v=>`${(v/1000).toFixed(0)}K`} />
@@ -111,11 +142,14 @@ export default function AdminDashboard() {
           <Building2 size={17} className="text-amber-400" />
           Pending AMC Approvals
           <span className="ml-1 px-2.5 py-0.5 text-xs font-bold rounded-full" style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24' }}>
-            {PENDING_AMCS.length}
+            {pendingAmcs.length}
           </span>
         </h2>
         <div className="space-y-3">
-          {PENDING_AMCS.map(amc => (
+          {pendingAmcs.length === 0 && (
+            <p className="text-sm" style={{ color: '#7a94ab' }}>No pending approvals</p>
+          )}
+          {pendingAmcs.map(amc => (
             <div key={amc.id} className="flex items-center justify-between rounded-xl border flex-wrap gap-4"
               style={{ padding: '1rem 1.25rem', background: 'rgba(245,158,11,0.04)', borderColor: 'rgba(245,158,11,0.1)' }}>
               <div>
@@ -123,8 +157,8 @@ export default function AdminDashboard() {
                 <p className="text-xs mt-1" style={{ color: '#7a94ab' }}>Applied: {amc.applied} • AUM: {amc.aum}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="success" size="sm" icon={Check}>Approve</Button>
-                <Button variant="danger"  size="sm" icon={X}>Reject</Button>
+                <Button variant="success" size="sm" icon={Check} onClick={() => handleApprove(amc.id)}>Approve</Button>
+                <Button variant="danger"  size="sm" icon={X}     onClick={() => handleReject(amc.id)}>Reject</Button>
               </div>
             </div>
           ))}

@@ -1,0 +1,74 @@
+# ─── Production-shaped topology from the playbook ────────────────────────────
+#   app tier (stateless) → Redis (cache + streams) ┐
+#                        → PgBouncer → Postgres PRIMARY (writes only)
+#                        → Postgres REPLICA(s)     (all other reads)
+#
+#   docker compose up -d
+#   then run the backend with:
+#     DATABASE_URL=postgresql://fundflow:fundflow@localhost:6432/fundflow   (via PgBouncer)
+#     REPLICA_URLS=postgresql://fundflow:fundflow@localhost:5442/fundflow
+#     REDIS_URL=redis://localhost:6379
+
+services:
+  postgres-primary:
+    image: bitnami/postgresql:17
+    environment:
+      POSTGRESQL_USERNAME: fundflow
+      POSTGRESQL_PASSWORD: fundflow
+      POSTGRESQL_DATABASE: fundflow
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl
+      POSTGRESQL_REPLICATION_PASSWORD: repl
+    ports:
+      - "5441:5432"
+    volumes:
+      - pg_primary_data:/bitnami/postgresql
+
+  # Layer 3: streaming read replica — add postgres-replica-2, -3 to scale reads.
+  postgres-replica:
+    image: bitnami/postgresql:17
+    depends_on:
+      - postgres-primary
+    environment:
+      POSTGRESQL_USERNAME: fundflow
+      POSTGRESQL_PASSWORD: fundflow
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_REPLICATION_USER: repl
+      POSTGRESQL_REPLICATION_PASSWORD: repl
+      POSTGRESQL_MASTER_HOST: postgres-primary
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+    ports:
+      - "5442:5432"
+
+  # Layer 4: PgBouncer multiplexes thousands of app connections onto ~100 real
+  # Postgres connections (transaction pooling). All WRITES flow through here.
+  pgbouncer:
+    image: bitnami/pgbouncer:latest
+    depends_on:
+      - postgres-primary
+    environment:
+      POSTGRESQL_HOST: postgres-primary
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: fundflow
+      POSTGRESQL_PASSWORD: fundflow
+      POSTGRESQL_DATABASE: fundflow
+      PGBOUNCER_DATABASE: fundflow
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: "5000"
+      PGBOUNCER_DEFAULT_POOL_SIZE: "100"
+    ports:
+      - "6432:6432"
+
+  # Layer 2 + 5: cache AND the durable queue (Redis Streams). AOF persistence
+  # so accepted-but-unsettled orders survive a restart.
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pg_primary_data:
+  redis_data:

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, PieChart, Wallet, Building2, Activity, ChevronRight, Star } from 'lucide-react';
+import { TrendingUp, TrendingDown, PieChart, Wallet, Building2, Activity, ChevronRight, Star, RefreshCw } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { Badge } from '../../components/UI/Badge';
 import { Button } from '../../components/UI/Button';
 import { useAuthStore } from '../../store/authStore';
-import { MOCK_PORTFOLIO, MOCK_TRANSACTIONS, MOCK_AMC_LIST } from '../../utils/mockData';
+import { usePortfolio, useTransactions, useAmcs } from '../../api/useApi';
 import { formatCurrency, formatPercent, formatDate, getStatusColor } from '../../utils/formatters';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -20,7 +20,19 @@ const CHART = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.15)'
 
 export default function ClientDashboard() {
   const { user } = useAuthStore();
-  const { totalInvested, currentValue, totalGain, totalGainPct, dayChange, dayChangePct, holdings } = MOCK_PORTFOLIO;
+  const { data: portfolio, loading: pLoading } = usePortfolio();
+  const { data: transactions } = useTransactions('', 4);
+  const { data: amcs } = useAmcs();
+
+  const totalInvested  = portfolio?.totalInvested  ?? 0;
+  const currentValue   = portfolio?.currentValue   ?? 0;
+  const totalGain      = portfolio?.totalGain      ?? 0;
+  const totalGainPct   = portfolio?.totalGainPct   ?? 0;
+  const dayChange      = portfolio?.dayChange      ?? 0;
+  const dayChangePct   = portfolio?.dayChangePct   ?? 0;
+  const holdings       = portfolio?.holdings       ?? [];
+  const activeSips     = holdings.filter(h => h.sipStatus === 'Active').length;
+
 
   return (
     <div className="space-y-8 pb-8">
@@ -98,7 +110,7 @@ export default function ClientDashboard() {
         <StatsCard title="Invested"   value={formatCurrency(totalInvested, true)} icon={Wallet}    accentColor="blue"    delay={0.15} />
         <StatsCard title="Total Gain" value={formatCurrency(totalGain, true)}     icon={TrendingUp} accentColor="emerald" trend={totalGainPct} trendLabel="overall" delay={0.2} />
         <StatsCard title="Holdings"   value={holdings.length} subtitle="Active schemes" icon={PieChart}  accentColor="blue"  delay={0.25} />
-        <StatsCard title="SIPs Active" value="2"             subtitle="Monthly SIPs"    icon={Activity}  accentColor="amber" delay={0.3} />
+        <StatsCard title="SIPs Active" value={activeSips}      subtitle="Monthly SIPs"    icon={Activity}  accentColor="amber" delay={0.3} />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
@@ -142,7 +154,7 @@ export default function ClientDashboard() {
             </Link>
           </div>
           <div className="space-y-0">
-            {MOCK_TRANSACTIONS.slice(0, 4).map((txn, i) => (
+            {(transactions ?? []).slice(0, 4).map((txn, i) => (
               <motion.div key={txn.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 + i * 0.06 }}
                 className="flex items-start gap-4 last:pb-0"
                 style={{ paddingBottom: '1.1rem', paddingTop: '1.1rem', borderBottom: i < 3 ? '1px solid rgba(27,154,245,0.06)' : 'none' }}>
@@ -176,7 +188,7 @@ export default function ClientDashboard() {
         <div className="relative p-8 lg:p-10">
           <p className="text-xs font-bold uppercase tracking-widest text-center mb-5" style={{ color: '#42b4ff' }}>Our AMC Partners</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {MOCK_AMC_LIST.slice(0, 4).map(amc => (
+            {(amcs ?? []).slice(0, 4).map(amc => (
               <Link key={amc.id} to={`/client/schemes?amc=${amc.id}`}
                 className="flex flex-col items-center gap-2 p-5 lg:p-6 rounded-xl transition-all group"
                 style={{ background: 'rgba(27,154,245,0.06)', border: '1px solid rgba(27,154,245,0.12)' }}

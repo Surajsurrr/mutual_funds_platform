@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Users, Activity, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { Badge } from '../../components/UI/Badge';
-import { MOCK_CB_STATS, MOCK_TRANSACTIONS } from '../../utils/mockData';
+import { useCbStats, useCbTransactions } from '../../api/useApi';
 import { formatDate, formatCurrency } from '../../utils/formatters';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -27,6 +27,10 @@ const TOOLTIP = {
 };
 
 export default function CBDashboard() {
+  const { data: cbStats }  = useCbStats();
+  const { data: cbTxns }   = useCbTransactions();
+  const recentTxns = (cbTxns ?? []).slice(0, 5);
+
   return (
     <div className="pb-8">
       {/* Header */}
@@ -40,10 +44,10 @@ export default function CBDashboard() {
 
       {/* Stats Cards Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
-        <StatsCard title="Total Clients"    value={MOCK_CB_STATS.totalClients.toLocaleString('en-IN')} icon={Users}         accentColor="blue"    trend={4.2}  delay={0} />
-        <StatsCard title="Active Today"     value={MOCK_CB_STATS.activeToday.toLocaleString('en-IN')}  icon={Activity}      accentColor="emerald" trend={12.5} delay={0.1} />
-        <StatsCard title="Txn Volume"       value={MOCK_CB_STATS.transactionVolume}                    icon={TrendingUp}    accentColor="amber"   trend={8.1}  delay={0.15} />
-        <StatsCard title="Flagged Accounts" value={MOCK_CB_STATS.flaggedAccounts}                      icon={AlertTriangle} accentColor="rose"               delay={0.2} />
+        <StatsCard title="Total Clients"    value={(cbStats?.totalClients ?? 0).toLocaleString('en-IN')} icon={Users}         accentColor="blue"    trend={4.2}  delay={0} />
+        <StatsCard title="Active Today"     value={(cbStats?.activeToday ?? 0).toLocaleString('en-IN')}  icon={Activity}      accentColor="emerald" trend={12.5} delay={0.1} />
+        <StatsCard title="Txn Volume"       value={cbStats?.transactionVolume ?? '—'}                    icon={TrendingUp}    accentColor="amber"   trend={8.1}  delay={0.15} />
+        <StatsCard title="Flagged Accounts" value={cbStats?.flaggedAccounts ?? 0}                        icon={AlertTriangle} accentColor="rose"               delay={0.2} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 lg:gap-10" style={{ marginBottom: '2.5rem' }}>
@@ -72,7 +76,7 @@ export default function CBDashboard() {
             </span>
           </div>
           <div className="space-y-3">
-            {MOCK_TRANSACTIONS.slice(0,5).map(txn => (
+            {recentTxns.map(txn => (
               <div key={txn.id} className="flex items-center justify-between rounded-xl transition-all border"
                 style={{ padding: '0.9rem 1.1rem', background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}
                 onMouseEnter={e => e.currentTarget.style.borderColor='rgba(18,180,195,0.25)'}
