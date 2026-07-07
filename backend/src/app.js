@@ -28,7 +28,7 @@ export function buildApp(role) {
 
   app.get('/health', (req, res) => res.json({ ok: true, role, uptime: process.uptime() }));
 
-  if (role === 'read' || role === 'web') {
+  if (role === 'read' || role === 'web' || role === 'all') {
     // ─── Read service: cache → replica. Never the primary (except the one
     // documented read-after-write endpoint). ────────────────────────────────
     const read = Router();
@@ -43,7 +43,7 @@ export function buildApp(role) {
     app.use('/api/read', read);
   }
 
-  if (role === 'write' || role === 'web') {
+  if (role === 'write' || role === 'web' || role === 'all') {
     // ─── Write service: the only tier that talks to the primary. ────────────
     const write = Router();
     write.use('/auth', authRouter); // public: login + register

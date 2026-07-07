@@ -33,12 +33,16 @@ export const Input = forwardRef(({
           className={`
             input-field
             ${variant === 'dark' ? 'input-field-dark' : ''}
-            ${Icon ? 'pl-10' : ''}
-            ${rightElement ? 'pr-12' : ''}
             ${error ? 'border-rose-500/50 focus:border-rose-500' : ''}
             ${className}
           `}
           {...props}
+          style={{
+            // inline so the unlayered .input-field padding can't override it
+            ...(Icon ? { paddingLeft: '2.5rem' } : {}),
+            ...(rightElement ? { paddingRight: '3rem' } : {}),
+            ...props.style,
+          }}
         />
         {rightElement && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
