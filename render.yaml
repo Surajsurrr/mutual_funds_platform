@@ -11,7 +11,9 @@ services:
     name: fundflow
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build && cd backend && npm ci --omit=dev
+    # --include=dev: NODE_ENV=production is set at build time too, which would
+    # otherwise make npm skip vite/tailwind and break the frontend build (127)
+    buildCommand: npm ci --include=dev && npm run build && cd backend && npm ci --omit=dev
     startCommand: cd backend && node scripts/deploy-start.js
     healthCheckPath: /health
     envVars:
