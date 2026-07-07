@@ -388,10 +388,16 @@ html { scroll-behavior: smooth; }
   width: 20rem !important; /* w-80 */
   display: flex !important;
   flex-direction: column !important;
-  padding-top: 92px !important; /* starts below header on mobile */
+  padding-top: 64px !important; /* starts below header on mobile (no ticker) */
   background: #202C44 !important;
   border-right: 1px solid rgba(255,255,255,0.06) !important;
   transition: transform 0.3s ease !important;
+}
+
+@media (min-width: 640px) {
+  .app-sidebar-fixed {
+    padding-top: 92px !important; /* ticker + nav on sm+ */
+  }
 }
 
 @media (min-width: 1024px) {
@@ -429,4 +435,93 @@ html { scroll-behavior: smooth; }
   border-left: 3px solid #12B4C3 !important;
   box-shadow: 0 4px 20px -8px rgba(18,180,195,0.2) !important;
   padding-left: 1.5rem !important;
+}
+
+/* ══════════════════ MOBILE RESPONSIVE ══════════════════ */
+
+/* Dashboard content wrapper: adjust for header height */
+/* Mobile: only 64px nav (no ticker); sm+: 92px (ticker + nav) */
+@media (min-width: 640px) {
+  .dashboard-content-wrapper {
+    padding-top: 92px !important;
+  }
+}
+
+/* Ensure tables are always horizontally scrollable on mobile */
+.data-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tighter table cells on small screens */
+@media (max-width: 640px) {
+  .data-table th {
+    padding: 0.65rem 0.625rem;
+    font-size: 0.65rem;
+  }
+  .data-table td {
+    padding: 0.75rem 0.625rem;
+    font-size: 0.8rem;
+  }
+  .data-table-dark th {
+    padding: 0.75rem 0.625rem !important;
+  }
+  .data-table-dark td {
+    padding: 0.85rem 0.625rem !important;
+  }
+}
+
+/* Responsive main content padding */
+@media (max-width: 1023px) {
+  /* Dashboard layout top padding adjustment */
+  .dashboard-main-content {
+    padding-top: 100px !important;
+  }
+}
+
+/* ── Mobile: reduce hero heading sizes ── */
+@media (max-width: 480px) {
+  .page-h1 {
+    font-size: 1.6rem !important;
+  }
+
+  /* Stats cards: reduce value font size so text fits */
+  .stats-value {
+    font-size: 1.35rem !important;
+  }
+
+  /* Card padding reduction */
+  .card-mobile-sm {
+    padding: 1.25rem !important;
+  }
+
+  /* Button: ensure touch-friendly size */
+  .ds-btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Horizontal scroll helpers for filter pills */
+.scroll-x-pills {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.scroll-x-pills::-webkit-scrollbar { display: none; }
+
+/* Auth layout sign-in card mobile padding */
+@media (max-width: 640px) {
+  .auth-signin-card {
+    padding: 1.75rem 1.25rem !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* Safe area padding for bottom nav on iOS */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body { padding-bottom: env(safe-area-inset-bottom); }
 }

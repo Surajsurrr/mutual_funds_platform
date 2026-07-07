@@ -108,7 +108,7 @@ export default function BuyPage() {
           ))}
         </div>
       </motion.div>
-      <div className="flex gap-3 mt-4">
+      <div className="flex flex-wrap gap-3 mt-4 justify-center">
         <Button variant="secondary" onClick={() => navigate('/client/portfolio')}>View Portfolio</Button>
         <Button variant="primary" onClick={() => { setOrderPlaced(false); setAmount(''); setClientRef(''); setOrderStatus('PENDING'); }}>Invest More</Button>
       </div>
@@ -124,9 +124,9 @@ export default function BuyPage() {
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: '2.25rem' }}>
+        style={{ marginBottom: '1.5rem' }}>
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Invest Now</p>
-        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Buy Fund</h1>
+        <h1 className="font-black text-white" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}>Buy Fund</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
       </motion.div>
 

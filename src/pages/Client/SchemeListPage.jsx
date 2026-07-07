@@ -69,17 +69,17 @@ export default function SchemeListPage() {
     <div className="pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: '2.25rem' }}>
+        style={{ marginBottom: '1.5rem' }}>
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Invest Now</p>
-        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Mutual Fund Schemes</h1>
+        <h1 className="font-black text-white" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}>Mutual Fund Schemes</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
-        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>{filtered.length} schemes across all AMCs</p>
+        <p className="text-sm mt-3" style={{ color: '#7a94ab' }}>{filtered.length} schemes across all AMCs</p>
       </motion.div>
 
       {/* Filter Panel Container */}
-      <div className="rounded-2xl" style={{ ...CARD, marginBottom: '2.25rem' }}>
+      <div className="rounded-2xl" style={{ ...CARD, marginBottom: '1.5rem', padding: 'clamp(1rem, 4vw, 2rem)' }}>
         {/* Search */}
-        <div className="relative" style={{ marginBottom: '1.5rem' }}>
+        <div className="relative" style={{ marginBottom: '1rem' }}>
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#12B4C3' }} />
           <input type="text" value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search funds..."
@@ -100,21 +100,21 @@ export default function SchemeListPage() {
         </div>
 
         {/* Categories pills filter */}
-        <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: '1.5rem' }}>
-          <span className="text-xs font-bold uppercase tracking-wider mr-2" style={{ color: '#7a94ab', fontSize: '0.7rem' }}>Category:</span>
+        <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: '1rem' }}>
+          <span className="text-xs font-bold uppercase tracking-wider mr-1" style={{ color: '#7a94ab', fontSize: '0.7rem' }}>Category:</span>
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => setCategory(c)}
               className="flex-shrink-0 rounded-full transition-all border"
               style={category === c
-                ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', borderColor: 'transparent', boxShadow: '0 4px 12px rgba(18,180,195,0.25)', fontSize: '0.825rem', fontWeight: 700, padding: '0.55rem 1.25rem' }
-                : { background: 'rgba(255,255,255,0.03)', color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.06)', fontSize: '0.825rem', fontWeight: 600, padding: '0.55rem 1.25rem' }}>
+                ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', borderColor: 'transparent', boxShadow: '0 4px 12px rgba(18,180,195,0.25)', fontSize: '0.825rem', fontWeight: 700, padding: '0.45rem 1rem' }
+                : { background: 'rgba(255,255,255,0.03)', color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.06)', fontSize: '0.825rem', fontWeight: 600, padding: '0.45rem 1rem' }}>
               {c}
             </button>
           ))}
         </div>
 
         {/* Dropdowns Row */}
-        <div className="flex flex-wrap items-center gap-6">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#7a94ab', fontSize: '0.7rem' }}>Risk:</span>
             <select value={risk} onChange={e => setRisk(e.target.value)} style={SELECT_STYLE}>

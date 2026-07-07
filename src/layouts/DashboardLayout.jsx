@@ -11,7 +11,15 @@ export const DashboardLayout = () => {
     <div className="min-h-screen overflow-x-hidden" style={{ background: '#0B1329' }}>
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
-      <div className="flex gap-8 lg:gap-10" style={{ paddingTop: '116px' }}>
+      {/* Overlay to close sidebar on mobile when tapping outside */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex dashboard-content-wrapper" style={{ paddingTop: '64px' }}>
         {/* Desktop Sidebar Spacer */}
         <div className="hidden lg:block w-80 flex-shrink-0" />
 
@@ -26,7 +34,7 @@ export const DashboardLayout = () => {
         </div>
 
         {/* Main Content */}
-        <main className="min-w-0 p-6 lg:p-10 max-w-[1100px] mx-auto w-full">
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10 max-w-[1100px] mx-auto w-full">
           <Outlet />
         </main>
       </div>

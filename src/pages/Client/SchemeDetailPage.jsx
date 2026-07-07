@@ -67,9 +67,9 @@ export default function SchemeDetailPage() {
 
       {/* NAV Chart */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-2xl p-6" style={CARD}>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
           <h2 className="text-base font-bold text-white">NAV History</h2>
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
             {PERIODS.map(p => (
               <button key={p} onClick={() => setPeriod(p)}
                 className="px-3 py-1 rounded-lg text-xs font-semibold border transition-all"

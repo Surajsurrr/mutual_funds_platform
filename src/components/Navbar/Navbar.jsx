@@ -27,8 +27,8 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
-      {/* Ticker strip — dark navy */}
-      <div className="overflow-hidden py-1.5 px-4" style={{ background: '#1B2745' }}>
+      {/* Ticker strip — hidden on very small screens to prevent overflow */}
+      <div className="hidden sm:block overflow-hidden py-1.5 px-4" style={{ background: '#1B2745' }}>
         <div className="flex gap-10 animate-ticker whitespace-nowrap">
           {[...NAV_TICKER, ...NAV_TICKER].map((item, i) => (
             <span key={i} className="text-xs font-mono font-medium">
@@ -97,8 +97,8 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                 {notifOpen && (
                   <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }} transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 w-80 rounded-2xl overflow-hidden"
-                    style={{ background: '#202C44', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+                    className="absolute top-full mt-2 rounded-2xl overflow-hidden"
+                    style={{ right: 0, width: 'min(320px, calc(100vw - 2rem)', background: '#202C44', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
                     <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                       <h3 className="font-bold text-sm" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>Notifications</h3>
                     </div>

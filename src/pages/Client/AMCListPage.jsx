@@ -31,11 +31,11 @@ export default function AMCListPage() {
     <div className="pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: '2.25rem' }}>
+        style={{ marginBottom: '1.5rem' }}>
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>Browse Partners</p>
-        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>AMC Companies</h1>
+        <h1 className="font-black text-white" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}>AMC Companies</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
-        <p className="text-sm mt-4.5" style={{ color: '#7a94ab' }}>Choose from {filtered.length} trusted Asset Management Companies</p>
+        <p className="text-sm mt-3" style={{ color: '#7a94ab' }}>Choose from {filtered.length} trusted Asset Management Companies</p>
       </motion.div>
 
       {/* Search Input Container */}

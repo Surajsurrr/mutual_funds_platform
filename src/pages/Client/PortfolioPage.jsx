@@ -48,14 +48,14 @@ export default function PortfolioPage() {
     <div className="pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: '2.25rem' }}>
+        style={{ marginBottom: '1.5rem' }}>
         <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>My Investments</p>
-        <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Portfolio</h1>
+        <h1 className="font-black text-white" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}>Portfolio</h1>
         <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8" style={{ marginBottom: '2rem' }}>
         <StatsCard title="Current Value" value={formatCurrency(currentValue,true)} icon={TrendingUp}  accentColor="blue"    delay={0} />
         <StatsCard title="Invested"      value={formatCurrency(totalInvested,true)} icon={PieIcon}    accentColor="amber"   delay={0.1} />
         <StatsCard title="Total Gain"    value={formatCurrency(totalGain,true)} subtitle={formatPercent(totalGainPct)} icon={TrendingUp} accentColor="emerald" delay={0.15} />
@@ -64,9 +64,9 @@ export default function PortfolioPage() {
           icon={TrendingUp} accentColor={dayChange>=0?'emerald':'rose'} delay={0.2} />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
+      <div className="grid lg:grid-cols-3 gap-5 lg:gap-8">
         {/* Allocation Pie Chart */}
-        <div className="rounded-2xl" style={CARD}>
+        <div className="rounded-2xl" style={{ ...CARD, padding: 'clamp(1.25rem, 4vw, 2.25rem)' }}>
           <h2 className="text-base font-bold text-white mb-5">Allocation</h2>
           <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">

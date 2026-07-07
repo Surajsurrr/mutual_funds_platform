@@ -35,14 +35,14 @@ export default function ClientDashboard() {
 
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-6 sm:space-y-8 pb-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-start justify-between flex-wrap gap-4"
-        style={{ marginBottom: '2.25rem' }}>
+        className="flex items-start justify-between flex-wrap gap-3"
+        style={{ marginBottom: '1.5rem' }}>
         <div>
           <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#12B4C3' }}>BE INVESTED</p>
-          <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>Good evening, {user?.name?.split(' ')[0]} 👋</h1>
+          <h1 className="font-black text-white" style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)' }}>Good evening, {user?.name?.split(' ')[0]} 👋</h1>
           <div style={{ height: '2px', background: 'linear-gradient(90deg, #12B4C3 0%, transparent 100%)', marginTop: '0.75rem', opacity: 0.4 }} />
         </div>
         <Link to="/client/amc">
@@ -52,19 +52,19 @@ export default function ClientDashboard() {
 
       {/* Portfolio Hero */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="rounded-2xl p-8 lg:p-10 relative overflow-hidden"
-        style={{ ...CARD, padding: '2.25rem', marginBottom: '2.25rem' }}>
+        className="rounded-2xl relative overflow-hidden"
+        style={{ ...CARD, padding: 'clamp(1.25rem, 4vw, 2.25rem)', marginBottom: '2.25rem' }}>
         {/* Blue top accent */}
         <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
         {/* Glow orb */}
         <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(27,154,245,0.08) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="space-y-2">
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#7a94ab', letterSpacing: '0.08em' }}>Total Portfolio Value</p>
-            <p className="text-4xl font-black text-white">{formatCurrency(currentValue)}</p>
-            <div className="flex items-center gap-4.5 flex-wrap pt-1 text-sm">
+            <p className="font-black text-white" style={{ fontSize: 'clamp(1.75rem, 6vw, 2.25rem)' }}>{formatCurrency(currentValue)}</p>
+            <div className="flex items-center gap-3 flex-wrap pt-1 text-sm">
               <div className="flex items-center gap-1.5">
                 <span style={{ color: '#7a94ab', fontSize: '0.85rem' }}>Invested</span>
                 <span className="text-white font-bold" style={{ fontSize: '0.9rem' }}>{formatCurrency(totalInvested)}</span>
@@ -77,7 +77,7 @@ export default function ClientDashboard() {
                   {formatCurrency(totalGain)} ({formatPercent(totalGainPct)})
                 </div>
               </div>
-              <div className="w-1 h-3.5 rounded-full bg-slate-700/50" />
+              <div className="w-1 h-3.5 rounded-full bg-slate-700/50 hidden sm:block" />
               <div className="flex items-center gap-1.5">
                 <span style={{ color: '#7a94ab', fontSize: '0.85rem' }}>Today</span>
                 <div className={`flex items-center gap-1 font-bold ${dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`} style={{ fontSize: '0.9rem' }}>
@@ -106,16 +106,16 @@ export default function ClientDashboard() {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" style={{ marginBottom: '2.5rem' }}>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8" style={{ marginBottom: '2rem' }}>
         <StatsCard title="Invested"   value={formatCurrency(totalInvested, true)} icon={Wallet}    accentColor="blue"    delay={0.15} />
         <StatsCard title="Total Gain" value={formatCurrency(totalGain, true)}     icon={TrendingUp} accentColor="emerald" trend={totalGainPct} trendLabel="overall" delay={0.2} />
         <StatsCard title="Holdings"   value={holdings.length} subtitle="Active schemes" icon={PieChart}  accentColor="blue"  delay={0.25} />
         <StatsCard title="SIPs Active" value={activeSips}      subtitle="Monthly SIPs"    icon={Activity}  accentColor="amber" delay={0.3} />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
+      <div className="grid lg:grid-cols-3 gap-5 lg:gap-8 lg:gap-10">
         {/* Holdings */}
-        <div className="lg:col-span-2 rounded-2xl" style={{ ...CARD, padding: '2.25rem' }}>
+        <div className="lg:col-span-2 rounded-2xl" style={{ ...CARD, padding: 'clamp(1.25rem, 4vw, 2.25rem)' }}>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-base font-bold text-white">My Holdings</h2>
             <Link to="/client/portfolio" className="text-xs font-semibold flex items-center gap-1" style={{ color: '#42b4ff' }}>

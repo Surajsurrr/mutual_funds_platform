@@ -724,7 +724,7 @@ export const AuthLayout = () => {
         <FloatingTradingTickers />
 
         {/* --- Content container --- */}
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
+        <div className="auth-content-container" style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', margin: '0 auto', padding: '4.5rem 2rem 5rem' }}>
 
           {/* Hero Grid Section */}
           <div className="hero-grid" style={{
@@ -828,6 +828,7 @@ export const AuthLayout = () => {
 
           {/* 7 - Sign In card */}
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.45 }}
+            className="auth-signin-card"
             style={{
               width: '100%',
               maxWidth: '1040px',
@@ -897,6 +898,26 @@ export const AuthLayout = () => {
         }
         @media (max-width: 600px) {
           .auth-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        /* Mobile: sign-in card smaller padding */
+        @media (max-width: 640px) {
+          .auth-signin-card {
+            padding: 1.75rem 1.25rem !important;
+            border-radius: 20px !important;
+          }
+        }
+
+        /* Mobile: hide 3D animation to save vertical space */
+        @media (max-width: 640px) {
+          .hero-image-col { display: none !important; }
+        }
+
+        /* Mobile: reduce container padding */
+        @media (max-width: 640px) {
+          .auth-content-container {
+            padding: 2rem 1rem 3rem !important;
+          }
         }
       `}</style>
     </div>
