@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Building2, TrendingUp, Activity, Settings, Check, X } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
@@ -40,6 +41,7 @@ const PENDING_AMCS = [
 ];
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const { data: stats }    = useAdminStats();
   const { data: analytics } = useAdminAnalytics();
   const { data: pending, refetch: refetchPending } = useAdminPending();
@@ -170,12 +172,13 @@ export default function AdminDashboard() {
         <h2 className="text-base font-bold text-white mb-5">Quick Actions</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { icon: Users,    label:'Manage Users',   color:'#12B4C3', bg:'rgba(18,180,195,0.1)' },
-            { icon: Building2,label:'Manage AMCs',    color:'#34d399', bg:'rgba(16,185,129,0.1)' },
-            { icon: Activity, label:'View Analytics', color:'#fbbf24', bg:'rgba(245,158,11,0.1)' },
-            { icon: Settings, label:'System Settings',color:'#f87171', bg:'rgba(239,68,68,0.1)'  },
+            { icon: Users,    label:'Manage Users',   color:'#12B4C3', bg:'rgba(18,180,195,0.1)', to:'/admin/users' },
+            { icon: Building2,label:'Manage AMCs',    color:'#34d399', bg:'rgba(16,185,129,0.1)', to:'/admin/amcs' },
+            { icon: Activity, label:'View Analytics', color:'#fbbf24', bg:'rgba(245,158,11,0.1)', to:'/admin/analytics' },
+            { icon: Settings, label:'System Settings',color:'#f87171', bg:'rgba(239,68,68,0.1)',  to:'/admin/settings' },
           ].map(action => (
-            <button key={action.label} className="flex flex-col items-center gap-3 rounded-xl transition-all group cursor-pointer"
+            <button key={action.label} onClick={() => navigate(action.to)}
+              className="flex flex-col items-center gap-3 rounded-xl transition-all group cursor-pointer"
               style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', padding: '1.25rem 1rem' }}
               onMouseEnter={e => e.currentTarget.style.borderColor='rgba(18,180,195,0.3)'}
               onMouseLeave={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.06)'}>
