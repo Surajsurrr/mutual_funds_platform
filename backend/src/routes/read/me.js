@@ -4,6 +4,7 @@ import { withCache } from '../../cache/index.js';
 import { config } from '../../config.js';
 import { asyncHandler, HttpError } from '../../middleware/errors.js';
 import { mapTransaction, mapOrder } from '../../services/mappers.js';
+import { subscribeOrderEvents } from '../../services/orderEvents.js';
 
 // Per-user reads for the signed-in investor.
 export const meRouter = Router();
@@ -96,4 +97,72 @@ meRouter.get('/orders/:clientRef', asyncHandler(async (req, res) => {
     throw new HttpError(404, 'Order not found');
   }
   res.json(mapOrder(rows[0]));
+}));
+
+// ─── SSE: push order status instead of client polling ────────────────────────
+// One long-lived response; the worker publishes on settle and we write it down
+// the wire immediately. A slow 10s DB re-check doubles as heartbeat and as the
+// fallback for deploy shapes where the pub/sub hop is unavailable.
+const FINAL = new Set(['SUCCESS', 'DEAD', 'FAILED']);
+
+meRouter.get('/orders/:clientRef/stream', asyncHandler(async (req, res) => {
+  const { clientRef } = req.params;
+  const userId = req.user.sub;
+
+  const fetchOrder = async () => {
+    const { rows } = await queryPrimary(
+      `SELECT o.*, s.name AS scheme_name FROM orders o
+       JOIN schemes s ON s.id = o.scheme_id
+       WHERE o.client_ref = $1 AND o.user_id = $2`,
+      [clientRef, userId]);
+    if (rows[0]) return mapOrder(rows[0]);
+    // Thin-intake mode: the intent may still be in the queue, not yet in the DB.
+    if (config.thinIntake) return { clientRef, status: 'PENDING', queued: true };
+    return null;
+  };
+
+  const initial = await fetchOrder();
+  if (!initial) throw new HttpError(404, 'Order not found');
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no', // don't let nginx-style proxies buffer the stream
+  });
+
+  let lastStatus = null;
+  let closed = false;
+  const send = (order) => {
+    if (closed) return;
+    lastStatus = order.status;
+    res.write(`data: ${JSON.stringify(order)}\n\n`);
+    if (FINAL.has(order.status)) cleanup(true);
+  };
+
+  const unsubscribe = subscribeOrderEvents((event) => {
+    if (event.clientRef !== clientRef || event.userId !== userId) return;
+    send({ clientRef, ...event });
+  });
+
+  // Heartbeat + safety net: keep proxies from idling the connection out, and
+  // catch settlements whose pub/sub event this process never saw.
+  const timer = setInterval(async () => {
+    try {
+      const order = await fetchOrder();
+      if (order && order.status !== lastStatus) send(order);
+      else if (!closed) res.write(': ping\n\n');
+    } catch { /* transient DB error — next tick retries */ }
+  }, 10_000);
+
+  function cleanup(end) {
+    if (closed) return;
+    closed = true;
+    clearInterval(timer);
+    unsubscribe();
+    if (end) res.end();
+  }
+  req.on('close', () => cleanup(false));
+
+  send(initial);
 }));

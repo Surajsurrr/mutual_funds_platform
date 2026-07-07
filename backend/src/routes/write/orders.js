@@ -20,7 +20,7 @@ export const ordersRouter = Router();
 const orderSchema = z.object({
   clientRef: z.string().min(8).max(64),
   schemeId: z.string().min(1),
-  type: z.enum(['BUY', 'SIP']),
+  type: z.enum(['BUY', 'SIP', 'REDEEM']),
   amount: z.number().positive(),
   sipDate: z.number().int().min(1).max(28).optional(),
 });
@@ -39,9 +39,21 @@ ordersRouter.post(
       return rows[0] ? mapScheme(rows[0]) : null;
     });
     if (!scheme) throw new HttpError(404, 'Scheme not found');
-    const minAmount = order.type === 'SIP' ? scheme.minSIP : scheme.minLumpsum;
-    if (order.amount < minAmount) {
-      throw new HttpError(400, `Minimum ${order.type} amount for this scheme is ₹${minAmount}`);
+    if (order.type === 'REDEEM') {
+      // Redemption: validate against what the user actually holds (cheap
+      // indexed read). Settlement re-checks inside the batch transaction.
+      const { rows } = await queryRead(
+        'SELECT units FROM holdings WHERE user_id = $1 AND scheme_id = $2', [userId, order.schemeId]);
+      const heldValue = rows[0] ? Number(rows[0].units) * scheme.nav : 0;
+      if (heldValue <= 0) throw new HttpError(400, 'You do not hold any units of this scheme');
+      if (order.amount > heldValue + 0.01) {
+        throw new HttpError(400, `Redemption exceeds current holding value (₹${heldValue.toFixed(2)})`);
+      }
+    } else {
+      const minAmount = order.type === 'SIP' ? scheme.minSIP : scheme.minLumpsum;
+      if (order.amount < minAmount) {
+        throw new HttpError(400, `Minimum ${order.type} amount for this scheme is ₹${minAmount}`);
+      }
     }
 
     const intent = {
@@ -79,7 +91,9 @@ ordersRouter.post(
     res.status(202).json({
       clientRef: order.clientRef,
       status: 'PENDING',
-      message: 'Order accepted — units will be allotted at today\'s NAV cutoff',
+      message: order.type === 'REDEEM'
+        ? 'Redemption accepted — units will be redeemed at today\'s NAV cutoff'
+        : 'Order accepted — units will be allotted at today\'s NAV cutoff',
     });
   })
 );

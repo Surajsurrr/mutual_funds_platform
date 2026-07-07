@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS orders (
   client_ref TEXT NOT NULL UNIQUE,
   user_id    TEXT NOT NULL REFERENCES users(id),
   scheme_id  TEXT NOT NULL REFERENCES schemes(id),
-  order_type TEXT NOT NULL CHECK (order_type IN ('BUY','SIP')),
+  order_type TEXT NOT NULL CHECK (order_type IN ('BUY','SIP','REDEEM')),
   amount     NUMERIC(14,2) NOT NULL CHECK (amount > 0),
   sip_date   INT,
   status     TEXT NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING','PROCESSING','SUCCESS','FAILED','DEAD')),
@@ -142,3 +142,8 @@ END $$;
 -- Safety net for out-of-window dates (should stay empty in practice)
 CREATE TABLE IF NOT EXISTS transactions_default PARTITION OF transactions DEFAULT;
 CREATE TABLE IF NOT EXISTS nav_history_default PARTITION OF nav_history DEFAULT;
+
+-- Migration (idempotent): existing clusters created before redemptions
+-- shipped still have the two-value order_type check — rebuild it.
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_order_type_check;
+ALTER TABLE orders ADD CONSTRAINT orders_order_type_check CHECK (order_type IN ('BUY','SIP','REDEEM'));

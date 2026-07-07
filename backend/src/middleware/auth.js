@@ -5,7 +5,10 @@ import { config } from '../config.js';
 // scales horizontally without sticky sessions.
 export function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  // ?access_token= exists for EventSource (SSE), which cannot set headers.
+  const token = header.startsWith('Bearer ')
+    ? header.slice(7)
+    : (typeof req.query.access_token === 'string' && req.query.access_token) || null;
   if (!token) return res.status(401).json({ error: 'Authentication required' });
   try {
     req.user = jwt.verify(token, config.jwtSecret); // { sub, role, name, email }

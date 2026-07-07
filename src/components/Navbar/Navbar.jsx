@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, ChevronDown, LogOut, User, Settings, Menu, X, TrendingUp, Phone } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { readClient } from '../../api/axiosClients';
 import { getRoleLabel } from '../../utils/formatters';
 
-const NAV_TICKER = [
+// Static fallback shown until live NAVs load
+const NAV_TICKER_FALLBACK = [
   'HDFC Top 100 ▲ 928.45 (+0.25%)',
   'SBI Bluechip ▼ 72.18 (-0.47%)',
   'ICICI Value ▲ 378.91 (+1.12%)',
@@ -16,25 +18,115 @@ const NAV_TICKER = [
   'DSP Midcap ▲ 113.20 (+1.34%)',
 ];
 
+const inr = (n) => `₹${Number(n).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+
+const dateLabel = (d) => {
+  if (!d) return '';
+  const day = String(d).slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  if (day === today) return 'today';
+  const diff = Math.round((new Date(today) - new Date(day)) / 86400000);
+  return diff === 1 ? 'yesterday' : `${diff} days ago`;
+};
+
 export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen,   setNotifOpen]   = useState(false);
+  const [ticker,      setTicker]      = useState(null);
+  const [notifs,      setNotifs]      = useState(null); // null = not fetched yet
 
   const handleLogout = () => { logout(); navigate('/login'); };
   const roleLabel = getRoleLabel(user?.role);
+
+  // Live NAV ticker from the schemes the platform actually serves
+  useEffect(() => {
+    let cancelled = false;
+    readClient.get('/schemes')
+      .then(({ data }) => {
+        if (cancelled || !Array.isArray(data) || data.length === 0) return;
+        setTicker(data.map(s => ({
+          text: `${s.name.replace(/\s*Fund$/, '')} ${s.dayChange >= 0 ? '▲' : '▼'} ${s.nav} (${s.dayChange >= 0 ? '+' : ''}${s.dayChangePct}%)`,
+          up: s.dayChange >= 0,
+        })));
+      })
+      .catch(() => { /* keep fallback */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  const tickerItems = ticker ?? NAV_TICKER_FALLBACK.map(t => ({ text: t, up: t.includes('▲') }));
+
+  // Role-aware notifications, fetched lazily when the bell is first opened
+  const loadNotifications = async () => {
+    try {
+      const role = user?.role;
+      if (role === 'client') {
+        const { data } = await readClient.get('/transactions?limit=6');
+        return (data ?? []).slice(0, 6).map(t => ({
+          icon: t.status === 'failed' ? '⚠️' : t.type === 'REDEEM' ? '💸' : t.type === 'SIP' ? '🔄' : '✅',
+          text: t.status === 'failed'
+            ? `${t.type} of ${inr(t.amount)} in ${t.schemeName} failed`
+            : t.type === 'REDEEM'
+              ? `Redeemed ${inr(t.amount)} from ${t.schemeName}`
+              : `${t.type === 'SIP' ? 'SIP' : 'Purchase'} of ${inr(t.amount)} in ${t.schemeName} settled`,
+          time: dateLabel(t.date),
+        }));
+      }
+      if (role === 'cb') {
+        const { data } = await readClient.get('/cb/transactions');
+        return (data ?? []).slice(0, 6).map(t => ({
+          icon: t.status === 'failed' ? '⚠️' : t.status === 'flagged' ? '🚩' : '🏦',
+          text: `${t.clientName}: ${t.type} of ${inr(t.amount)} in ${t.schemeName} (${t.status})`,
+          time: dateLabel(t.date),
+        }));
+      }
+      if (role === 'amc') {
+        const { data } = await readClient.get('/amc/schemes');
+        return [...(data ?? [])]
+          .sort((a, b) => Math.abs(b.dayChangePct) - Math.abs(a.dayChangePct))
+          .slice(0, 5)
+          .map(s => ({
+            icon: s.dayChange >= 0 ? '📈' : '📉',
+            text: `NAV updated: ${s.name} ₹${s.nav} (${s.dayChange >= 0 ? '+' : ''}${s.dayChangePct}%)`,
+            time: 'today',
+          }));
+      }
+      if (role === 'admin') {
+        const [dlq, pending] = await Promise.all([
+          readClient.get('/admin/dlq'),
+          readClient.get('/admin/amcs/pending'),
+        ]);
+        const items = [];
+        const dead = dlq.data?.deadLetters?.length ?? 0;
+        if (dead) items.push({ icon: '🧨', text: `${dead} order${dead > 1 ? 's' : ''} parked in the dead letter queue`, time: 'action needed' });
+        if (dlq.data?.queueDepth > 0) items.push({ icon: '📬', text: `${dlq.data.queueDepth} order(s) waiting in the queue`, time: 'live' });
+        for (const a of (pending.data ?? []).slice(0, 4)) {
+          items.push({ icon: '🏢', text: `AMC approval pending: ${a.name} (${a.aum})`, time: dateLabel(a.applied) });
+        }
+        return items;
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  };
+
+  const handleBellClick = async () => {
+    setProfileOpen(false);
+    const opening = !notifOpen;
+    setNotifOpen(opening);
+    if (opening) setNotifs(await loadNotifications());
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
       {/* Ticker strip — hidden on very small screens to prevent overflow */}
       <div className="hidden sm:block overflow-hidden py-1.5 px-4" style={{ background: '#1B2745' }}>
         <div className="flex gap-10 animate-ticker whitespace-nowrap">
-          {[...NAV_TICKER, ...NAV_TICKER].map((item, i) => (
+          {[...tickerItems, ...tickerItems].map((item, i) => (
             <span key={i} className="text-xs font-mono font-medium">
-              {item.includes('▲')
-                ? <span style={{ color: '#34d399' }}>{item}</span>
-                : <span style={{ color: '#f87171' }}>{item}</span>}
+              <span style={{ color: item.up ? '#34d399' : '#f87171' }}>{item.text}</span>
             </span>
           ))}
         </div>
@@ -83,14 +175,16 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
             {/* Notifications */}
             <div className="relative">
               <button id="nav-notifications"
-                onClick={() => { setNotifOpen(o => !o); setProfileOpen(false); }}
+                onClick={handleBellClick}
                 className="relative p-2 rounded-xl transition-colors"
                 style={{ color: '#cbd5e1' }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(18,180,195,0.1)'; e.currentTarget.style.color = '#12B4C3'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#cbd5e1'; }}>
                 <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full animate-pulse-teal"
-                  style={{ background: '#12B4C3' }} />
+                {(notifs === null || notifs.length > 0) && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full animate-pulse-teal"
+                    style={{ background: '#12B4C3' }} />
+                )}
               </button>
 
               <AnimatePresence>
@@ -102,11 +196,11 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                     <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                       <h3 className="font-bold text-sm" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>Notifications</h3>
                     </div>
-                    {[
-                      { icon: '✅', text: 'SIP of ₹3,000 processed successfully', time: '2 min ago' },
-                      { icon: '📊', text: 'HDFC Top 100 NAV updated: ₹928.45',   time: '1 hr ago' },
-                      { icon: '🎉', text: 'Portfolio crossed ₹1.5 Lakh!',         time: '3 hrs ago' },
-                    ].map((n, i) => (
+                    {notifs === null ? (
+                      <div className="p-4 text-xs" style={{ color: '#a0aec0' }}>Loading…</div>
+                    ) : notifs.length === 0 ? (
+                      <div className="p-4 text-xs" style={{ color: '#a0aec0' }}>You're all caught up ✨</div>
+                    ) : notifs.map((n, i) => (
                       <div key={i} className="flex gap-3 p-4 transition-colors cursor-pointer"
                         style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                         onMouseEnter={e => e.currentTarget.style.background='rgba(18,180,195,0.06)'}

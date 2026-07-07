@@ -3,6 +3,7 @@ import { queryPrimary, withTransaction } from '../db/pools.js';
 import { withRetry } from '../services/retry.js';
 import { debitBankAccount } from '../services/bankApi.js';
 import { invalidate } from '../cache/index.js';
+import { publishOrderEvent } from '../services/orderEvents.js';
 import { config } from '../config.js';
 
 // ═══ The async batch worker — where ALL the heavy lifting happens ════════════
@@ -60,26 +61,57 @@ async function settleBatch(batch) {
   const failed = results.filter((r) => r.error);
 
   // ONE commit settles the whole batch (PDF write-spike rule #5).
+  // Status changes are collected here and pushed to SSE subscribers only
+  // AFTER the commit — never announce a state the DB doesn't hold yet.
+  const events = [];
   await withTransaction(async (tx) => {
     for (const { order, receipt } of settled) {
       const units = +(Number(order.amount) / Number(order.current_nav)).toFixed(4);
+
+      if (order.order_type === 'REDEEM') {
+        // Redemption: re-check units inside the transaction (the request-path
+        // check can be stale), reduce cost basis proportionally, never go < 0.
+        const { rows: upd } = await tx.query(
+          `UPDATE holdings SET
+             invested = GREATEST(invested - invested * (LEAST($3, units) / units), 0),
+             units = GREATEST(units - $3, 0),
+             updated_at = now()
+           WHERE user_id = $1 AND scheme_id = $2 AND units > 0 AND units >= $3 - 0.001
+           RETURNING units`,
+          [order.user_id, order.scheme_id, units]);
+        if (!upd[0]) {
+          await tx.query(
+            `INSERT INTO transactions (user_id, scheme_id, order_id, txn_type, amount, units, nav, status)
+             VALUES ($1,$2,$3,'REDEEM',$4,0,$5,'failed')`,
+            [order.user_id, order.scheme_id, order.id, order.amount, order.current_nav]);
+          await tx.query(
+            `UPDATE orders SET status = 'DEAD', error = 'Insufficient units at settlement' WHERE id = $1`,
+            [order.id]);
+          events.push({ clientRef: order.client_ref, userId: order.user_id, status: 'DEAD', error: 'Insufficient units at settlement' });
+          continue;
+        }
+      } else {
+        await tx.query(
+          `INSERT INTO holdings (user_id, scheme_id, units, invested, sip_status)
+           VALUES ($1,$2,$3,$4,$5)
+           ON CONFLICT (user_id, scheme_id) DO UPDATE SET
+             units = holdings.units + EXCLUDED.units,
+             invested = holdings.invested + EXCLUDED.invested,
+             sip_status = CASE WHEN EXCLUDED.sip_status = 'Active' THEN 'Active' ELSE holdings.sip_status END,
+             updated_at = now()`,
+          [order.user_id, order.scheme_id, units, order.amount, order.order_type === 'SIP' ? 'Active' : 'None']);
+      }
+
       await tx.query(
         `INSERT INTO transactions (user_id, scheme_id, order_id, txn_type, amount, units, nav, status)
          VALUES ($1,$2,$3,$4,$5,$6,$7,'success')`,
         [order.user_id, order.scheme_id, order.id, order.order_type, order.amount, units, order.current_nav]);
       await tx.query(
-        `INSERT INTO holdings (user_id, scheme_id, units, invested, sip_status)
-         VALUES ($1,$2,$3,$4,$5)
-         ON CONFLICT (user_id, scheme_id) DO UPDATE SET
-           units = holdings.units + EXCLUDED.units,
-           invested = holdings.invested + EXCLUDED.invested,
-           sip_status = CASE WHEN EXCLUDED.sip_status = 'Active' THEN 'Active' ELSE holdings.sip_status END,
-           updated_at = now()`,
-        [order.user_id, order.scheme_id, units, order.amount, order.order_type === 'SIP' ? 'Active' : 'None']);
-      await tx.query(
         `UPDATE orders SET status = 'SUCCESS', nav = $2, units = $3, utr = $4, settled_at = now(), error = NULL
          WHERE id = $1`,
         [order.id, order.current_nav, units, receipt.utr]);
+      events.push({ clientRef: order.client_ref, userId: order.user_id, status: 'SUCCESS',
+        nav: Number(order.current_nav), units, utr: receipt.utr });
     }
     for (const { order, error } of failed) {
       await tx.query(
@@ -89,6 +121,7 @@ async function settleBatch(batch) {
       await tx.query(
         `UPDATE orders SET status = 'DEAD', error = $2 WHERE id = $1`,
         [order.id, String(error.message)]);
+      events.push({ clientRef: order.client_ref, userId: order.user_id, status: 'DEAD', error: String(error.message) });
     }
   });
 
@@ -103,6 +136,9 @@ async function settleBatch(batch) {
   // portfolio so their very next read shows the settled order — no replica lag.
   const userIds = [...new Set(orders.map((o) => o.user_id))];
   await invalidate(...userIds.map((u) => `portfolio:${u}`), 'stats:cb', 'stats:admin', 'stats:amc:*', 'stats:analytics');
+
+  // Push the committed status changes to any browser listening on SSE.
+  for (const event of events) await publishOrderEvent(event);
 
   if (settled.length) console.log(`[orders] settled ${settled.length} order(s) in one commit`);
 }

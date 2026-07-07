@@ -32,23 +32,50 @@ export default function BuyPage() {
   const [clientRef,   setClientRef]   = useState('');
   const [orderStatus, setOrderStatus] = useState('PENDING');
 
-  // Poll the read-after-write endpoint until the queued order settles
+  // Live order status over SSE: the server pushes the moment the worker
+  // settles the order — no polling. Falls back to polling if the stream dies.
   useEffect(() => {
     if (!orderPlaced || !clientRef) return;
     let stopped = false;
     let timer;
+    let es;
+
+    const isFinal = (s) => s === 'SUCCESS' || s === 'DEAD' || s === 'FAILED';
+
     const poll = async () => {
       try {
         const res = await readClient.get(`/orders/${clientRef}`);
         if (stopped) return;
         const s = res.data?.status || 'PENDING';
         setOrderStatus(s);
-        if (s === 'SUCCESS' || s === 'DEAD' || s === 'FAILED') return;
+        if (isFinal(s)) return;
       } catch { /* transient — keep polling */ }
       if (!stopped) timer = setTimeout(poll, 2000);
     };
-    timer = setTimeout(poll, 1500);
-    return () => { stopped = true; clearTimeout(timer); };
+
+    const token = localStorage.getItem('ff_token');
+    if (typeof EventSource !== 'undefined' && token) {
+      es = new EventSource(`/api/read/orders/${clientRef}/stream?access_token=${encodeURIComponent(token)}`);
+      es.onmessage = (e) => {
+        if (stopped) return;
+        try {
+          const order = JSON.parse(e.data);
+          setOrderStatus(order.status || 'PENDING');
+          if (isFinal(order.status)) es.close();
+        } catch { /* ignore malformed frame */ }
+      };
+      es.onerror = () => {
+        // CONNECTING = auto-reconnecting, leave it alone. CLOSED = gave up
+        // (e.g. auth rejected) → fall back to the old polling loop.
+        if (es.readyState === EventSource.CLOSED && !stopped) {
+          timer = setTimeout(poll, 1500);
+        }
+      };
+    } else {
+      timer = setTimeout(poll, 1500);
+    }
+
+    return () => { stopped = true; clearTimeout(timer); es?.close(); };
   }, [orderPlaced, clientRef]);
 
   if (schemeLoading) return <div className="flex items-center justify-center h-64"><p className="text-slate-400 text-sm">Loading scheme...</p></div>;

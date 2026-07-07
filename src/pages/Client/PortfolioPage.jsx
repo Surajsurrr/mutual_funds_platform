@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, PieChart as PieIcon, ShoppingCart } from 'lucide-react';
+import { TrendingUp, TrendingDown, PieChart as PieIcon, ShoppingCart, Banknote } from 'lucide-react';
 import { usePortfolio } from '../../api/useApi';
+import { readClient, writeClient } from '../../api/axiosClients';
 import { StatsCard } from '../../components/UI/StatsCard';
+import { Button } from '../../components/UI/Button';
+import { Modal } from '../../components/UI/Modal';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import toast from 'react-hot-toast';
 
 const PIE_COLORS = ['#1b9af5','#42b4ff','#fbbf24','#f87171','#8b5cf6'];
 
@@ -27,7 +31,68 @@ const TOOLTIP = {
 };
 
 export default function PortfolioPage() {
-  const { data: portfolio, loading } = usePortfolio();
+  const { data: portfolio, loading, refetch } = usePortfolio();
+
+  // Redeem flow: modal -> queued REDEEM order -> poll until it settles
+  const [redeemHolding, setRedeemHolding] = useState(null);
+  const [redeemAmount, setRedeemAmount]   = useState('');
+  const [redeeming, setRedeeming]         = useState(false);
+  const [pollRef, setPollRef]             = useState('');
+
+  useEffect(() => {
+    if (!pollRef) return;
+    let stopped = false;
+    let timer;
+    const poll = async () => {
+      try {
+        const res = await readClient.get(`/orders/${pollRef}`);
+        if (stopped) return;
+        const s = res.data?.status;
+        if (s === 'SUCCESS') {
+          toast.success('Redemption completed — money is on its way to your bank!');
+          setPollRef('');
+          refetch();
+          return;
+        }
+        if (s === 'DEAD' || s === 'FAILED') {
+          toast.error(`Redemption failed: ${res.data?.error || 'bank transfer error'}`);
+          setPollRef('');
+          return;
+        }
+      } catch { /* transient — keep polling */ }
+      if (!stopped) timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 1500);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [pollRef, refetch]);
+
+  const openRedeem = (h) => { setRedeemHolding(h); setRedeemAmount(''); };
+
+  const handleRedeem = async () => {
+    const amt = parseFloat(redeemAmount) || 0;
+    if (amt <= 0) { toast.error('Enter an amount to redeem'); return; }
+    if (amt > redeemHolding.currentValue + 0.01) {
+      toast.error(`You can redeem up to ${formatCurrency(redeemHolding.currentValue)}`);
+      return;
+    }
+    setRedeeming(true);
+    try {
+      const ref = `RED-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+      await writeClient.post('/orders', {
+        clientRef: ref,
+        schemeId: redeemHolding.schemeId,
+        type: 'REDEEM',
+        amount: amt,
+      });
+      setRedeemHolding(null);
+      setPollRef(ref);
+      toast.success('Redemption placed — processing at today\'s NAV...');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to place redemption');
+    } finally {
+      setRedeeming(false);
+    }
+  };
 
   const totalInvested = portfolio?.totalInvested ?? 0;
   const currentValue  = portfolio?.currentValue  ?? 0;
@@ -123,7 +188,14 @@ export default function PortfolioPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex justify-end mt-4">
+                <div className="flex justify-end gap-2 mt-4">
+                  <button onClick={() => openRedeem(h)} id={`redeem-${h.schemeId}`}
+                    className="text-xs font-bold flex items-center gap-1.5 rounded-lg border transition-all"
+                    style={{ color: '#fbbf24', borderColor: 'rgba(251,191,36,0.2)', padding: '0.45rem 0.95rem', fontSize: '0.75rem', fontWeight: 700 }}
+                    onMouseEnter={e => { e.currentTarget.style.background='rgba(251,191,36,0.1)'; e.currentTarget.style.borderColor='#fbbf24'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='rgba(251,191,36,0.2)'; }}>
+                    <Banknote size={12} /> Redeem
+                  </button>
                   <Link to={`/client/buy/${h.schemeId}`}>
                     <button className="text-xs font-bold flex items-center gap-1.5 rounded-lg border transition-all"
                       style={{ color: '#12B4C3', borderColor: 'rgba(18,180,195,0.2)', padding: '0.45rem 0.95rem', fontSize: '0.75rem', fontWeight: 700 }}
@@ -138,6 +210,50 @@ export default function PortfolioPage() {
           </div>
         </div>
       </div>
+
+      {/* Redeem Modal */}
+      <Modal isOpen={!!redeemHolding} onClose={() => setRedeemHolding(null)} title="Redeem Units" size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setRedeemHolding(null)} disabled={redeeming}>Cancel</Button>
+            <Button variant="primary" onClick={handleRedeem} loading={redeeming} id="confirm-redeem">Redeem</Button>
+          </>
+        }>
+        {redeemHolding && (
+          <div className="space-y-4">
+            <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="font-bold text-white">{redeemHolding.schemeName}</p>
+              <p className="text-xs mt-1" style={{ color: '#7a94ab' }}>
+                {redeemHolding.units.toFixed(3)} units held · current value <span className="text-white font-semibold">{formatCurrency(redeemHolding.currentValue)}</span>
+              </p>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider mb-1.5 block" style={{ color: '#7a94ab' }}>Amount to redeem (₹)</label>
+              <input type="number" value={redeemAmount} onChange={e => setRedeemAmount(e.target.value)}
+                placeholder={`Up to ${formatCurrency(redeemHolding.currentValue)}`}
+                min="1" max={redeemHolding.currentValue}
+                style={{
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '12px', color: '#ffffff', padding: '0.75rem 1rem', outline: 'none',
+                  fontSize: '1rem', fontWeight: 700, width: '100%', fontFamily: 'Inter, sans-serif',
+                }}
+                className="focus:border-[#12B4C3]" id="redeem-amount" />
+              <div className="flex gap-2 mt-2.5">
+                {[25, 50, 100].map(pct => (
+                  <button key={pct} onClick={() => setRedeemAmount(((redeemHolding.currentValue * pct) / 100).toFixed(2))}
+                    className="flex-1 rounded-lg border text-xs font-bold transition-all"
+                    style={{ color: '#cbd5e1', borderColor: 'rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)', padding: '0.45rem' }}>
+                    {pct === 100 ? 'All' : `${pct}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-xs leading-relaxed" style={{ color: '#7a94ab' }}>
+              Redemptions ride the same order queue — you'll get a confirmation the moment the payout settles.
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
