@@ -29,18 +29,9 @@ export const RoleRoute = ({ allowedRoles }) => {
   return <Outlet />;
 };
 
-// ─── PublicRoute: redirect authenticated users away from login/register ───────
-export const PublicRoute = () => {
-  const { isAuthenticated, user } = useAuthStore();
-
-  if (isAuthenticated) {
-    const redirectMap = {
-      client: '/client/dashboard',
-      cb: '/cb/dashboard',
-      amc: '/amc/dashboard',
-      admin: '/admin/dashboard',
-    };
-    return <Navigate to={redirectMap[user?.role] || '/client/dashboard'} replace />;
-  }
-  return <Outlet />;
-};
+// ─── PublicRoute: login/register are the app's entry point ────────────────────
+// We intentionally do NOT auto-forward a persisted session into a dashboard, so
+// opening the app (or the shared link) always lands on the login page. Signing
+// in still routes to the role dashboard explicitly (see LoginPage.onSubmit),
+// and protected routes keep their own auth guards.
+export const PublicRoute = () => <Outlet />;
