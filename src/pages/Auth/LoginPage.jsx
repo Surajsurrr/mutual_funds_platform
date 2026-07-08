@@ -13,7 +13,6 @@ import toast from 'react-hot-toast';
 const schema = z.object({
   email:    z.string().email('Enter a valid email'),
   password: z.string().min(6, 'At least 6 characters'),
-  role:     z.enum(['client','cb','amc','admin']),
 });
 
 const DEMO_ACCOUNTS = [
@@ -32,12 +31,10 @@ export default function LoginPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { role: 'client', email: '', password: '' },
+    defaultValues: { email: '', password: '' },
   });
-
-  const selectedRole = watch('role');
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -45,7 +42,6 @@ export default function LoginPage() {
       const res = await writeClient.post('/auth/login', {
         email: data.email,
         password: data.password,
-        role: data.role,
       });
       const { user, token } = res.data;
       login(user, token);
@@ -58,13 +54,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
-  const ROLE_OPTS = [
-    { value: 'client', label: 'Investor',      icon: TrendingUp },
-    { value: 'cb',     label: 'Corp. Banking', icon: Landmark },
-    { value: 'amc',    label: 'AMC',           icon: Building2 },
-    { value: 'admin',  label: 'Admin',         icon: Settings },
-  ];
 
   return (
     <div className="auth-card-grid">
@@ -87,7 +76,7 @@ export default function LoginPage() {
               return (
                 <button key={acc.role}
                   type="button"
-                  onClick={() => { setValue('email', acc.email); setValue('password', acc.password); setValue('role', acc.role); toast(`Demo Autofilled: ${acc.label}`); }}
+                  onClick={() => { setValue('email', acc.email); setValue('password', acc.password); toast(`Demo Autofilled: ${acc.label}`); }}
                   className="text-left rounded-xl transition-all flex items-center gap-3"
                   style={{
                     padding: '0.8rem 1rem',
@@ -144,29 +133,6 @@ export default function LoginPage() {
       {/* Right Column: Form Container */}
       <div className="space-y-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Role selector */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-white">Sign in as</label>
-            <div className="grid grid-cols-2 gap-2">
-              {ROLE_OPTS.map(r => {
-                const OptIcon = r.icon;
-                return (
-                  <label key={r.value}
-                    className="flex items-center gap-3 rounded-xl cursor-pointer transition-all"
-                    style={{
-                      padding: '0.8rem 1rem',
-                      border: `1px solid ${selectedRole === r.value ? '#12B4C3' : 'rgba(255,255,255,0.08)'}`,
-                      background: selectedRole === r.value ? 'rgba(18,180,195,0.12)' : 'rgba(255,255,255,0.02)',
-                    }}>
-                    <input type="radio" value={r.value} {...register('role')} className="sr-only" />
-                    <OptIcon size={15} style={{ color: selectedRole === r.value ? '#12B4C3' : '#7a94ab' }} />
-                    <span className="text-xs font-semibold" style={{ color: selectedRole === r.value ? '#12B4C3' : '#b0c4d8' }}>{r.label}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-
           <Input label="Email Address" type="email" icon={Mail} placeholder="you@example.com" error={errors.email?.message} variant="dark" {...register('email')} />
 
           <Input label="Password" type={showPassword ? 'text' : 'password'} icon={Lock} placeholder="••••••••"
