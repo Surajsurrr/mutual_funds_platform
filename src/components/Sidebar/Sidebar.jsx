@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Building2, LineChart, PieChart,
   History, Users, FileText, BarChart3, Settings, Shield,
-  TrendingUp, Briefcase, UserCheck, BookOpen, Activity,
+  TrendingUp, Briefcase, UserCheck, BookOpen, Activity, Database,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -31,6 +31,7 @@ const ADMIN_NAV = [
   { icon: Users,           label: 'Users',          to: '/admin/users' },
   { icon: Building2,       label: 'AMC Management', to: '/admin/amcs' },
   { icon: BarChart3,       label: 'Analytics',      to: '/admin/analytics' },
+  { icon: Database,        label: 'Database',       to: '/admin/database' },
   { icon: Settings,        label: 'Settings',       to: '/admin/settings' },
 ];
 const NAV_MAP = { client: CLIENT_NAV, cb: CB_NAV, amc: AMC_NAV, admin: ADMIN_NAV };

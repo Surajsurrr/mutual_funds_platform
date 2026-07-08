@@ -60,7 +60,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
         </div>
       )}
 
-      <div className="rounded-xl overflow-hidden" style={{ border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,154,245,0.1)' }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(18,180,195,0.1)' }}>
         <div className="overflow-x-auto">
           <table className={`data-table ${isDark ? 'data-table-dark' : ''}`}>
             <thead>
@@ -72,8 +72,8 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
                       {col.header}
                       {col.sortable && (
                         <span className="flex flex-col">
-                          <ChevronUp  size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'asc'  ? (isDark ? '#12B4C3' : '#1b9af5') : '#264470' }} />
-                          <ChevronDown size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'desc' ? (isDark ? '#12B4C3' : '#1b9af5') : '#264470' }} />
+                          <ChevronUp  size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'asc'  ? (isDark ? '#12B4C3' : '#12B4C3') : '#33507E' }} />
+                          <ChevronDown size={10} style={{ color: sortKey === (col.accessor || col.key) && sortDir === 'desc' ? (isDark ? '#12B4C3' : '#12B4C3') : '#33507E' }} />
                         </span>
                       )}
                     </div>
@@ -110,7 +110,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
             <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page===1}
               className="p-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ color: '#b0c4d8' }}
-              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(27,154,245,0.1)'}
+              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(18,180,195,0.1)'}
               onMouseLeave={e => e.currentTarget.style.background='transparent'}>
               <ChevronLeft size={16} />
             </button>
@@ -121,7 +121,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
                 <button key={pg} onClick={() => setPage(pg)}
                   className="w-8 h-8 rounded-lg text-xs font-semibold transition-all"
                   style={pg === page
-                    ? { background: isDark ? 'linear-gradient(135deg,#0B667E,#12B4C3)' : 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', boxShadow: isDark ? '0 4px 12px rgba(18,180,195,0.25)' : '' }
+                    ? { background: isDark ? 'linear-gradient(135deg,#0B667E,#12B4C3)' : 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', boxShadow: isDark ? '0 4px 12px rgba(18,180,195,0.25)' : '' }
                     : { color: '#7a94ab' }}>
                   {pg}
                 </button>
@@ -130,7 +130,7 @@ export const DataTable = ({ columns, data = [], loading = false, emptyTitle = 'N
             <button onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={page===totalPages}
               className="p-1.5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               style={{ color: '#b0c4d8' }}
-              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(27,154,245,0.1)'}
+              onMouseEnter={e => e.currentTarget.style.background=isDark?'rgba(255,255,255,0.03)':'rgba(18,180,195,0.1)'}
               onMouseLeave={e => e.currentTarget.style.background='transparent'}>
               <ChevronRight size={16} />
             </button>

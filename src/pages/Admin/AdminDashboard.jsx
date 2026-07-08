@@ -26,7 +26,7 @@ const CARD = {
 };
 
 const TOOLTIP = {
-  background: '#111b30',
+  background: '#121C33',
   border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 10,
   fontSize: 12,

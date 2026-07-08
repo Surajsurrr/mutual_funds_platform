@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, ShieldAlert, Award, UserPlus, Search, Edit2, Ban, Eye } from 'lucide-react';
 import { DataTable } from '../../components/UI/DataTable';
@@ -39,12 +40,25 @@ const EMPTY_FORM = {
 
 export default function CBClientsPage() {
   const { data: apiClients, refetch } = useCbClients();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState(() => {
+    const s = searchParams.get('status');
+    return ['Active', 'Flagged', 'Suspended'].includes(s) ? s : 'All';
+  });
 
   // Modal states
   const [showModal, setShowModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+
+  // Deep link from the dashboard's "Review →": open the audit modal for a client
+  const reviewId = searchParams.get('review');
+  useEffect(() => {
+    if (reviewId && apiClients) {
+      const c = apiClients.find(x => x.id === reviewId);
+      if (c) { setSelectedClient(c); setShowModal(true); }
+    }
+  }, [reviewId, apiClients]);
 
   // Onboarding modal
   const [showOnboard, setShowOnboard] = useState(false);

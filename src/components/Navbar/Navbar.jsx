@@ -122,7 +122,7 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40">
       {/* Ticker strip — hidden on very small screens to prevent overflow */}
-      <div className="hidden sm:block overflow-hidden py-1.5 px-4" style={{ background: '#1B2745' }}>
+      <div className="hidden sm:block overflow-hidden py-1.5 px-4" style={{ background: '#080E1A', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="flex gap-10 animate-ticker whitespace-nowrap">
           {[...tickerItems, ...tickerItems].map((item, i) => (
             <span key={i} className="text-xs font-mono font-medium">
@@ -133,7 +133,7 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
       </div>
 
       {/* Main Navbar — dark navy bg */}
-      <nav style={{ background: '#202C44', borderBottom: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+      <nav style={{ background: '#0E1526', borderBottom: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 2px 16px rgba(0,0,0,0.28)' }}
         className="px-4 lg:px-6 py-0">
         <div className="flex items-center justify-between h-16">
           {/* Left */}
@@ -192,7 +192,7 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                   <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }} transition={{ duration: 0.15 }}
                     className="absolute top-full mt-2 rounded-2xl overflow-hidden"
-                    style={{ right: 0, width: 'min(320px, calc(100vw - 2rem)', background: '#202C44', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+                    style={{ right: 0, width: 'min(320px, calc(100vw - 2rem)', background: '#121C33', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 16px 48px -12px rgba(0,0,0,0.6)' }}>
                     <div className="p-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                       <h3 className="font-bold text-sm" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>Notifications</h3>
                     </div>
@@ -242,7 +242,7 @@ export const Navbar = ({ onMenuToggle, isSidebarOpen }) => {
                   <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }} transition={{ duration: 0.15 }}
                     className="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden"
-                    style={{ background: '#202C44', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+                    style={{ background: '#121C33', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 16px 48px -12px rgba(0,0,0,0.6)' }}>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '1rem 1.25rem' }}>
                       <p className="font-semibold text-sm" style={{ color: '#ffffff', fontFamily: 'Poppins, sans-serif' }}>{user?.name}</p>
                       <p className="text-xs mt-1" style={{ color: '#a0aec0' }}>{user?.email}</p>

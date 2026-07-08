@@ -141,7 +141,7 @@ export default function SettingsPage() {
                 outline: 'none', fontSize: '0.825rem', fontFamily: 'Inter, sans-serif', cursor: 'pointer',
               }}>
               {['English', 'हिन्दी', 'தமிழ்', 'తెలుగు'].map(l => (
-                <option key={l} value={l} style={{ background: '#202C44', color: '#fff' }}>{l}</option>
+                <option key={l} value={l} style={{ background: '#1A2540', color: '#fff' }}>{l}</option>
               ))}
             </select>
           </div>

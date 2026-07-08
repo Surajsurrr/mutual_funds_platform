@@ -1,9 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Users, Activity, TrendingUp, AlertTriangle, ChevronRight } from 'lucide-react';
+import { Users, Activity, TrendingUp, AlertTriangle, ChevronRight, ShieldCheck } from 'lucide-react';
 import { StatsCard } from '../../components/UI/StatsCard';
 import { Badge } from '../../components/UI/Badge';
-import { useCbStats, useCbTransactions } from '../../api/useApi';
+import { useCbStats, useCbTransactions, useCbClients } from '../../api/useApi';
 import { formatDate, formatCurrency } from '../../utils/formatters';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -19,7 +20,7 @@ const CARD = {
 };
 
 const TOOLTIP = {
-  background: '#111b30',
+  background: '#121C33',
   border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 10,
   fontSize: 12,
@@ -27,9 +28,21 @@ const TOOLTIP = {
 };
 
 export default function CBDashboard() {
+  const navigate = useNavigate();
   const { data: cbStats }  = useCbStats();
   const { data: cbTxns }   = useCbTransactions();
+  const { data: cbClients } = useCbClients();
   const recentTxns = (cbTxns ?? []).slice(0, 5);
+
+  // Real flagged accounts, derived from live client data (not hardcoded)
+  const flaggedAccounts = (cbClients ?? [])
+    .filter(c => c.status === 'Flagged')
+    .map(c => ({
+      id: c.id,
+      name: c.name,
+      reason: c.risk === 'High' ? 'High-risk profile · flagged for review' : 'Flagged for review',
+      amount: formatCurrency(c.holdings),
+    }));
 
   return (
     <div className="pb-8">
@@ -109,28 +122,42 @@ export default function CBDashboard() {
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <AlertTriangle size={17} className="text-red-400" /> Flagged Accounts
           </h2>
-          <button className="text-xs font-semibold flex items-center gap-1" style={{ color: '#12B4C3' }}>
-            View all <ChevronRight size={12} />
-          </button>
+          {flaggedAccounts.length > 0 && (
+            <button onClick={() => navigate('/cb/clients?status=Flagged')}
+              className="text-xs font-semibold flex items-center gap-1 transition-colors hover:text-white" style={{ color: '#12B4C3' }}>
+              View all <ChevronRight size={12} />
+            </button>
+          )}
         </div>
-        <div className="space-y-3">
-          {[
-            { id:'USR4521', name:'Ramesh Kumar', reason:'Unusual transaction volume',   amount:'₹14.2L' },
-            { id:'USR8832', name:'Priya Sharma',  reason:'Multiple failed transactions', amount:'₹2.8L'  },
-          ].map(acc => (
-            <div key={acc.id} className="flex items-center justify-between rounded-xl border"
-              style={{ padding: '1rem 1.25rem', background: 'rgba(239,68,68,0.04)', borderColor: 'rgba(239,68,68,0.1)' }}>
-              <div>
-                <p className="text-sm font-semibold text-white">{acc.name} <span className="text-xs" style={{ color: '#7a94ab' }}>({acc.id})</span></p>
-                <p className="text-xs font-medium mt-0.5 text-red-400">{acc.reason}</p>
-              </div>
-              <div className="text-right ml-4">
-                <p className="text-sm font-bold text-white">{acc.amount}</p>
-                <button className="text-xs font-semibold mt-1 transition-colors hover:text-white" style={{ color: '#12B4C3' }}>Review →</button>
-              </div>
+        {flaggedAccounts.length === 0 ? (
+          <div className="flex items-center gap-3 rounded-xl"
+            style={{ padding: '1.1rem 1.25rem', background: 'rgba(52,211,153,0.05)', border: '1px solid rgba(52,211,153,0.15)' }}>
+            <ShieldCheck size={20} className="text-emerald-400 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-white">No flagged accounts</p>
+              <p className="text-xs mt-0.5" style={{ color: '#7E93AC' }}>All client activity looks normal right now.</p>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {flaggedAccounts.map(acc => (
+              <div key={acc.id} className="flex items-center justify-between rounded-xl border transition-colors"
+                style={{ padding: '1rem 1.25rem', background: 'rgba(239,68,68,0.04)', borderColor: 'rgba(239,68,68,0.1)' }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(239,68,68,0.1)'}>
+                <div>
+                  <p className="text-sm font-semibold text-white">{acc.name} <span className="text-xs" style={{ color: '#7a94ab' }}>({acc.id})</span></p>
+                  <p className="text-xs font-medium mt-0.5 text-red-400">{acc.reason}</p>
+                </div>
+                <div className="text-right ml-4">
+                  <p className="text-sm font-bold text-white">{acc.amount}</p>
+                  <button onClick={() => navigate(`/cb/clients?review=${acc.id}`)}
+                    className="text-xs font-semibold mt-1 transition-colors hover:text-white" style={{ color: '#12B4C3' }}>Review →</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -428,8 +428,8 @@ const Header = () => {
 
   return (
     <header style={{
-      background: '#1B2745',
-      borderBottom: '1px solid rgba(11,102,126,0.12)',
+      background: '#0E1526',
+      borderBottom: '1px solid rgba(255,255,255,0.07)',
       position: 'sticky', top: 0, zIndex: 100,
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
@@ -517,7 +517,7 @@ const Header = () => {
                 <input placeholder="Search schemes, AMCs, funds..."
                   style={{
                     width: '100%', padding: '0.65rem 1rem 0.65rem 2.75rem',
-                    background: '#202C44', border: '1.5px solid rgba(11,102,126,0.2)',
+                    background: '#1A2540', border: '1.5px solid rgba(11,102,126,0.2)',
                     borderRadius: '10px', color: '#fff', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={e => e.target.style.borderColor='#12B4C3'}
@@ -553,7 +553,7 @@ const Header = () => {
 
 /* --- Footer --------------------------------------------------------- */
 const Footer = () => (
-  <footer style={{ background: '#1B2745', borderTop: '1px solid rgba(11,102,126,0.12)', marginTop: 'auto' }}>
+  <footer style={{ background: '#0E1526', borderTop: '1px solid rgba(255,255,255,0.07)', marginTop: 'auto' }}>
     {/* Partner logos strip */}
     <div style={{ background: 'rgba(11,102,126,0.07)', borderBottom: '1px solid rgba(11,102,126,0.1)', padding: '1rem 0' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
@@ -688,13 +688,13 @@ const Footer = () => (
 /* --- AuthLayout ----------------------------------------------------- */
 export const AuthLayout = () => {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#1B2745' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#0B1220' }}>
 
       {/* -- HEADER -- */}
       <Header />
 
       <main style={{ flex: 1, position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(160deg, #1B2745 0%, #1a2e50 50%, #0e2a4a 100%)',
+        background: 'radial-gradient(1200px 600px at 78% 8%, rgba(18,180,195,0.10), transparent 60%), linear-gradient(165deg, #0B1220 0%, #0C1728 55%, #08111E 100%)',
       }}>
 
         {/* Background stock chart image */}
@@ -703,7 +703,7 @@ export const AuthLayout = () => {
           backgroundImage: 'url(/chart-bg.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.18,
+          opacity: 0.09,
           mixBlendMode: 'overlay',
           pointerEvents: 'none',
         }} />

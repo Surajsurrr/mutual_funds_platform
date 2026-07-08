@@ -30,7 +30,7 @@ const ALLOCATIONS = [
 ];
 
 const TOOLTIP = {
-  background: '#111b30',
+  background: '#121C33',
   border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 10,
   fontSize: 12,
@@ -104,7 +104,7 @@ export default function AdminAnalyticsPage() {
         <h2 className="text-base font-bold text-white mb-5">Platform Assets Class Distribution</h2>
         <div className="space-y-4.5">
           {ALLOCATIONS.map((alloc, idx) => {
-            const colors = ['#1b9af5', '#10b981', '#fbbf24', '#8b5cf6', '#f87171'];
+            const colors = ['#12B4C3', '#10b981', '#fbbf24', '#8b5cf6', '#f87171'];
             return (
               <div key={alloc.category}>
                 <div className="flex items-center justify-between text-xs font-bold mb-1.5" style={{ color: '#cbd5e1' }}>

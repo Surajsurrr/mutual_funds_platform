@@ -22,7 +22,7 @@ export const Modal = ({ isOpen, onClose, title, children, footer, size = 'md', c
           <motion.div initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }} transition={{ type: 'spring', duration: 0.35, bounce: 0.2 }}
             className={`relative w-full ${sizes[size]} rounded-2xl`}
-            style={{ background: '#111b30', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 24px 64px rgba(0,0,0,0.6)', overflow: 'hidden' }}>
+            style={{ background: '#121C33', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 24px 64px rgba(0,0,0,0.6)', overflow: 'hidden' }}>
             {title && (
               <div className="flex items-center justify-between"
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '1.5rem' }}>

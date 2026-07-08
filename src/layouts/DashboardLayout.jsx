@@ -8,7 +8,7 @@ export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{ background: '#0B1329' }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ background: '#0B1220' }}>
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} isSidebarOpen={sidebarOpen} />
 
       {/* Overlay to close sidebar on mobile when tapping outside */}
@@ -33,9 +33,14 @@ export const DashboardLayout = () => {
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         </div>
 
-        {/* Main Content */}
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-10 max-w-[1100px] mx-auto w-full">
-          <Outlet />
+        {/* Main Content — fill the area after the sidebar and center an inner
+            column via flex (align-items:center) so wide screens stay balanced
+            instead of shoving content against the sidebar. Using items-center
+            rather than mx-auto avoids flex auto-margin quirks. */}
+        <main className="min-w-0 flex-1 flex flex-col items-center">
+          <div className="w-full max-w-[1360px] px-5 py-6 sm:px-8 lg:px-12 lg:py-10">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

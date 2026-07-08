@@ -49,7 +49,7 @@ const REPORTS = [
     description: 'Analyze fee commissions earned from AMC companies, switch commissions, and client management overheads.',
     icon: TrendingUp,
     format: 'CSV / Excel',
-    color: '#42b4ff',
+    color: '#3ECFDC',
     type: 'Financial'
   }
 ];

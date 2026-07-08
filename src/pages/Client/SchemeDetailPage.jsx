@@ -9,8 +9,8 @@ import { getRiskColor } from '../../utils/formatters';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const PERIODS = ['1M','3M','6M','1Y','3Y','5Y'];
-const CARD  = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' };
-const CHART = { background: '#0f2442', border: '1px solid rgba(27,154,245,0.15)', borderRadius: 10, fontSize: 12, color: '#d9e4ef' };
+const CARD  = { background: '#121C33', border: '1px solid rgba(18,180,195,0.1)', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' };
+const CHART = { background: '#121C33', border: '1px solid rgba(18,180,195,0.15)', borderRadius: 10, fontSize: 12, color: '#d9e4ef' };
 
 export default function SchemeDetailPage() {
   const { id } = useParams();
@@ -29,39 +29,48 @@ export default function SchemeDetailPage() {
   );
 
   return (
-    <div className="space-y-6 pb-8 max-w-5xl">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium transition-colors" style={{ color: '#7a94ab' }}>
+    <div className="space-y-6 pb-8">
+      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-medium transition-colors" style={{ color: '#7E93AC' }}>
         <ArrowLeft size={16} /> Back
       </button>
 
-
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl overflow-hidden" style={CARD}>
-        <div className="h-0.5" style={{ background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
-        <div className="p-6 flex flex-col sm:flex-row justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              <h1 className="text-xl font-black text-white">{scheme.name}</h1>
-              <Badge variant={getRiskColor(scheme.risk).replace('badge-','')}>{scheme.risk}</Badge>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(27,154,245,0.1)', color: '#42b4ff' }}>{scheme.category}</span>
-            </div>
-            <div className="flex items-center gap-1 mb-4">
-              {Array.from({ length: 5 }, (_, i) => <Star key={i} size={14} style={i < scheme.rating ? { color: '#fbbf24', fill: '#fbbf24' } : { color: '#264470', fill: '#264470' }} />)}
-              <span className="text-sm font-bold ml-1" style={{ color: '#fbbf24' }}>{scheme.rating}.0</span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div>
-                <p className="text-xs" style={{ color: '#7a94ab' }}>Current NAV</p>
-                <p className="text-2xl font-black text-white">₹{scheme.nav}</p>
-                <p className={`text-xs font-semibold ${scheme.dayChange >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {scheme.dayChange >= 0 ? '+' : ''}₹{scheme.dayChange} ({scheme.dayChangePct}%)
-                </p>
+        <div className="h-1" style={{ background: 'linear-gradient(90deg,#0B667E,#3ECFDC)' }} />
+        <div className="p-6 lg:p-7">
+          {/* Identity + primary CTA */}
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2.5 flex-wrap mb-2.5">
+                <h1 className="text-xl lg:text-2xl font-black text-white leading-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>{scheme.name}</h1>
+                <Badge variant={getRiskColor(scheme.risk).replace('badge-','')}>{scheme.risk}</Badge>
+                <span className="badge badge-info">{scheme.category}</span>
               </div>
-              <div><p className="text-xs" style={{ color: '#7a94ab' }}>AUM</p><p className="text-lg font-bold text-white">₹{scheme.aum} Cr</p></div>
-              <div><p className="text-xs" style={{ color: '#7a94ab' }}>Min SIP</p><p className="text-lg font-bold text-white">₹{scheme.minSIP}</p></div>
-              <div><p className="text-xs" style={{ color: '#7a94ab' }}>Min Lumpsum</p><p className="text-lg font-bold text-white">₹{scheme.minLumpsum.toLocaleString('en-IN')}</p></div>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }, (_, i) => <Star key={i} size={14} style={i < scheme.rating ? { color: '#fbbf24', fill: '#fbbf24' } : { color: '#33507E', fill: '#33507E' }} />)}
+                <span className="text-sm font-bold ml-1.5" style={{ color: '#fbbf24' }}>{scheme.rating}.0</span>
+              </div>
+            </div>
+            {/* self-start prevents the flex row from stretching the pill button into a circle */}
+            <div className="w-full lg:w-auto flex-shrink-0 self-stretch lg:self-start">
+              <Button variant="primary" size="lg" fullWidth onClick={() => navigate(`/client/buy/${scheme.id}`)} icon={TrendingUp} id="invest-now-btn">Invest Now</Button>
             </div>
           </div>
-          <Button variant="primary" size="lg" onClick={() => navigate(`/client/buy/${scheme.id}`)} icon={TrendingUp} id="invest-now-btn">Invest Now</Button>
+
+          {/* Key stats strip — hairline dividers via gap-px over a lighter bg */}
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+            {[
+              { label: 'Current NAV', value: `₹${scheme.nav}`, sub: `${scheme.dayChange >= 0 ? '+' : ''}₹${scheme.dayChange} (${scheme.dayChangePct}%)`, up: scheme.dayChange >= 0 },
+              { label: 'AUM', value: `₹${scheme.aum} Cr` },
+              { label: 'Min SIP', value: `₹${scheme.minSIP}` },
+              { label: 'Min Lumpsum', value: `₹${scheme.minLumpsum.toLocaleString('en-IN')}` },
+            ].map(st => (
+              <div key={st.label} className="p-4" style={{ background: '#121C33' }}>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#7E93AC' }}>{st.label}</p>
+                <p className="text-lg font-black text-white leading-none">{st.value}</p>
+                {st.sub && <p className={`text-xs font-semibold mt-1.5 ${st.up ? 'text-emerald-400' : 'text-red-400'}`}>{st.sub}</p>}
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
 
@@ -74,8 +83,8 @@ export default function SchemeDetailPage() {
               <button key={p} onClick={() => setPeriod(p)}
                 className="px-3 py-1 rounded-lg text-xs font-semibold border transition-all"
                 style={period === p
-                  ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', borderColor: 'transparent' }
-                  : { background: 'rgba(27,154,245,0.06)', color: '#b0c4d8', borderColor: 'rgba(27,154,245,0.15)' }}>
+                  ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', borderColor: 'transparent' }
+                  : { background: 'rgba(18,180,195,0.06)', color: '#b0c4d8', borderColor: 'rgba(18,180,195,0.15)' }}>
                 {p}
               </button>
             ))}
@@ -86,15 +95,15 @@ export default function SchemeDetailPage() {
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="navGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#1b9af5" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#1b9af5" stopOpacity={0} />
+                  <stop offset="5%"  stopColor="#12B4C3" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#12B4C3" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(27,154,245,0.07)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(18,180,195,0.07)" />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#7a94ab' }} axisLine={false} tickLine={false} interval={4} />
               <YAxis tick={{ fontSize: 11, fill: '#7a94ab' }} axisLine={false} tickLine={false} domain={['auto','auto']} />
               <Tooltip formatter={v => [`₹${v}`, 'NAV']} contentStyle={CHART} labelStyle={{ color: '#7a94ab' }} />
-              <Area type="monotone" dataKey="nav" stroke="#1b9af5" strokeWidth={2} fill="url(#navGrad)" dot={false} />
+              <Area type="monotone" dataKey="nav" stroke="#12B4C3" strokeWidth={2} fill="url(#navGrad)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -110,9 +119,9 @@ export default function SchemeDetailPage() {
                   <span style={{ color: '#7a94ab' }}>{r.label}</span>
                   <span className="font-bold text-emerald-400">{r.val}%</span>
                 </div>
-                <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'rgba(27,154,245,0.1)' }}>
+                <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'rgba(18,180,195,0.1)' }}>
                   <div className="absolute left-0 top-0 h-full rounded-full"
-                    style={{ width: `${Math.min(r.val*2,100)}%`, background: 'linear-gradient(90deg,#0e7ee4,#42b4ff)' }} />
+                    style={{ width: `${Math.min(r.val*2,100)}%`, background: 'linear-gradient(90deg,#0B667E,#3ECFDC)' }} />
                   <div className="absolute top-0 h-full w-0.5 bg-amber-400" style={{ left: `${Math.min(r.bench*2,100)}%` }} />
                 </div>
                 <p className="text-xs mt-0.5" style={{ color: '#7a94ab' }}>Benchmark: {r.bench}%</p>
@@ -133,7 +142,7 @@ export default function SchemeDetailPage() {
               { label:'Exit Load',val:'1% (within 1yr)' },
               { label:'Expense Ratio',val:'1.67%' },
             ].map(item => (
-              <div key={item.label} className="flex justify-between py-1" style={{ borderBottom: '1px solid rgba(27,154,245,0.06)' }}>
+              <div key={item.label} className="flex justify-between py-1" style={{ borderBottom: '1px solid rgba(18,180,195,0.06)' }}>
                 <span className="text-xs" style={{ color: '#7a94ab' }}>{item.label}</span>
                 <span className="text-xs font-semibold text-white">{item.val}</span>
               </div>

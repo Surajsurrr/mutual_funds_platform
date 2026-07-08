@@ -44,6 +44,7 @@ import AdminUsersPage from '../pages/Admin/AdminUsersPage';
 import AdminAMCsPage from '../pages/Admin/AdminAMCsPage';
 import AdminAnalyticsPage from '../pages/Admin/AdminAnalyticsPage';
 import AdminSettingsPage from '../pages/Admin/AdminSettingsPage';
+import AdminDatabasePage from '../pages/Admin/AdminDatabasePage';
 
 const Loader = () => (
   <div className="flex items-center justify-center min-h-[50vh]">
@@ -124,6 +125,7 @@ export const AppRoutes = () => {
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/amcs" element={<AdminAMCsPage />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+            <Route path="/admin/database" element={<AdminDatabasePage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
           </Route>
         </Route>

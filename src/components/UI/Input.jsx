@@ -8,7 +8,7 @@ export const Input = forwardRef(({
   rightElement,
   className = '',
   containerClassName = '',
-  variant = 'light',
+  variant = 'dark',
   ...props
 }, ref) => {
   return (

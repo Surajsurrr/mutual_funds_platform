@@ -55,6 +55,15 @@ export const useAdminAnalytics = () => useFetch(readClient, '/admin/analytics');
 export const useAdminDLQ      = () => useFetch(readClient, '/admin/dlq');
 export const useAdminSystem   = () => useFetch(readClient, '/admin/system');
 
+// Database explorer
+export const useAdminDbTables = () => useFetch(readClient, '/admin/db/tables');
+export const useAdminDbRows   = (table, search = '', page = 1, pageSize = 50) =>
+  useFetch(
+    readClient,
+    `/admin/db/tables/${encodeURIComponent(table)}?search=${encodeURIComponent(search)}&page=${page}&pageSize=${pageSize}`,
+    { skip: !table }
+  );
+
 // ─── AMC reads ────────────────────────────────────────────────────────────────
 export const useAmcStats     = () => useFetch(readClient, '/amc/stats');
 export const useAmcSchemes   = () => useFetch(readClient, '/amc/schemes');

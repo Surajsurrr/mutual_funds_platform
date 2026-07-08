@@ -11,7 +11,7 @@ import { formatCurrency, formatPercent } from '../../utils/formatters';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import toast from 'react-hot-toast';
 
-const PIE_COLORS = ['#1b9af5','#42b4ff','#fbbf24','#f87171','#8b5cf6'];
+const PIE_COLORS = ['#12B4C3','#3ECFDC','#fbbf24','#f87171','#8b5cf6'];
 
 const CARD = {
   background: 'rgba(255,255,255,0.03)',
@@ -23,7 +23,7 @@ const CARD = {
 };
 
 const TOOLTIP = {
-  background: '#111b30',
+  background: '#121C33',
   border: '1px solid rgba(255,255,255,0.08)',
   borderRadius: 10,
   fontSize: 12,

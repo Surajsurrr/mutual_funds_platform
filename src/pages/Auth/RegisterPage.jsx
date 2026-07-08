@@ -72,16 +72,16 @@ export default function RegisterPage() {
               <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all"
                 style={
                   i < step  ? { background: '#059669', color: '#fff' } :
-                  i === step ? { background: 'linear-gradient(135deg,#0e7ee4,#1b9af5)', color: '#fff', boxShadow: '0 0 16px rgba(27,154,245,0.4)' } :
-                               { background: 'rgba(27,154,245,0.1)', color: '#7a94ab' }
+                  i === step ? { background: 'linear-gradient(135deg,#0B667E,#12B4C3)', color: '#fff', boxShadow: '0 0 16px rgba(18,180,195,0.4)' } :
+                               { background: 'rgba(18,180,195,0.1)', color: '#7a94ab' }
                 }>
                 {i < step ? <Check size={14} /> : i + 1}
               </div>
-              <span className="text-xs font-medium" style={{ color: i === step ? '#42b4ff' : '#7a94ab' }}>{s}</span>
+              <span className="text-xs font-medium" style={{ color: i === step ? '#3ECFDC' : '#7a94ab' }}>{s}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className="flex-1 h-0.5 mx-2 mb-4 transition-all"
-                style={{ background: i < step ? '#059669' : 'rgba(27,154,245,0.15)' }} />
+                style={{ background: i < step ? '#059669' : 'rgba(18,180,195,0.15)' }} />
             )}
           </React.Fragment>
         ))}
@@ -132,7 +132,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-sm" style={{ color: '#b0c4d8' }}>
         Already have an account?{' '}
-        <Link to="/login" className="font-bold" style={{ color: '#42b4ff' }}>Sign in</Link>
+        <Link to="/login" className="font-bold" style={{ color: '#3ECFDC' }}>Sign in</Link>
       </p>
     </div>
   );

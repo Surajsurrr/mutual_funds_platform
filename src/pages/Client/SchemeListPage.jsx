@@ -118,13 +118,13 @@ export default function SchemeListPage() {
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#7a94ab', fontSize: '0.7rem' }}>Risk:</span>
             <select value={risk} onChange={e => setRisk(e.target.value)} style={SELECT_STYLE}>
-              {RISK_LEVELS.map(r => <option key={r} value={r} style={{ background: '#202C44', color: '#fff' }}>{r}</option>)}
+              {RISK_LEVELS.map(r => <option key={r} value={r} style={{ background: '#1A2540', color: '#fff' }}>{r}</option>)}
             </select>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: '#7a94ab', fontSize: '0.7rem' }}>Sort by:</span>
             <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={SELECT_STYLE}>
-              {SORT_OPTIONS.map(s => <option key={s.value} value={s.value} style={{ background: '#202C44', color: '#fff' }}>{s.label}</option>)}
+              {SORT_OPTIONS.map(s => <option key={s.value} value={s.value} style={{ background: '#1A2540', color: '#fff' }}>{s.label}</option>)}
             </select>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function SchemeListPage() {
                   ))}
                   <div className="flex items-center gap-0.5 md:w-20 md:justify-center flex-shrink-0">
                     {Array.from({ length: 5 }, (_, si) => (
-                      <Star key={si} size={13} style={si < scheme.rating ? { color: '#fbbf24', fill: '#fbbf24' } : { color: '#264470', fill: '#264470' }} />
+                      <Star key={si} size={13} style={si < scheme.rating ? { color: '#fbbf24', fill: '#fbbf24' } : { color: '#33507E', fill: '#33507E' }} />
                     ))}
                   </div>
                   <div className="md:w-24 flex justify-end flex-shrink-0">

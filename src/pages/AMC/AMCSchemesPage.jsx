@@ -254,7 +254,7 @@ export default function AMCSchemesPage() {
                   fontSize: '0.85rem',
                   width: '100%',
                 }}>
-                {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c} style={{ background: '#202C44' }}>{c}</option>)}
+                {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c} style={{ background: '#1A2540' }}>{c}</option>)}
               </select>
             </div>
             <div>
@@ -270,7 +270,7 @@ export default function AMCSchemesPage() {
                   fontSize: '0.85rem',
                   width: '100%',
                 }}>
-                {RISK_LEVELS.filter(r => r !== 'All').map(r => <option key={r} value={r} style={{ background: '#202C44' }}>{r}</option>)}
+                {RISK_LEVELS.filter(r => r !== 'All').map(r => <option key={r} value={r} style={{ background: '#1A2540' }}>{r}</option>)}
               </select>
             </div>
           </div>
